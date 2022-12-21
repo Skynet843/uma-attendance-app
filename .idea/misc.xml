@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_calculate_day_wise_salary_by_admin.xml" value="0.24932003626473254" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_display_employee_tracking_location_on_map.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_on_boarding.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_splash.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_user_dashboard.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_view_images.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_attendance_history.xml" value="0.3283514492753623" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_notes.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_add_person.xml" value="0.32142857142857145" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_mark_attendance_from_anywhere.xml" value="0.32135416666666666" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_settings.xml" value="0.2291577597263788" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_attendance_history_in_calendar.xml" value="0.33" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_profile.xml" value="0.22" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_add_leave_type.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_admin_app_module.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_admin_timesheet_app_module.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_all_branch_mapping_pending_employees.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_branches_for_holiday_list.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_common_branch_list.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employee_list.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employee_performance.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employees_timesheet_hours.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_header_for_day_wise.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_header_for_hour_wise.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_location.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_notes.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_present_employee.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_user_app_module.xml" value="0.2975630611372381" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/drawable/image_border.xml" value="0.39692307692307693" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_add_work_area.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_admin_dashboard.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_display_employee_tracking_location_on_map.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_image_picker.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_on_boarding.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_punch_out_alarm.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_sign_in.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_splash.xml" value="0.36186594202898553" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_user_dashboard.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_view_images.xml" value="0.12" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_add_mobile_dialer_code.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_attendance_history.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_broadcast_notification.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_change_password.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_holiday.xml" value="0.36186594202898553" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_notes.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_pdf_viewer.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_phone_mapping.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dialog_update_location.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dropdown_hint_item.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/dropdown_work_area.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_add_person.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_admin_mark_attendance.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_admin_sign_in.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_branch_wise_holiday_list.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_calculate_day_wise_salary_by_admin.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_calculate_hour_wise_salary_by_admin.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_calculate_month_wise_salary_by_admin.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_employee_performance.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_find_company_branch_on_map.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_leave.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_leave_master.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_mark_attendance_from_anywhere.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_notes.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_phone_no_verification.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_present_employees.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_setting_how_to_use_app.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_setting_privacy_policy.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_setting_tips.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_settings.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_sign_up.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_attendance_history_in_calendar.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_list_for_calculate_salary.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_list_for_timesheet.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_list_to_track_employee_current_location.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_profile.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_user_sign_in.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_view_all_employees.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/layout_material_day.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/marker_info_window.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/nothing_yet.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/onboard_item.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_add_leave_type.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_admin_app_module.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_admin_timesheet_app_module.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_all_branch_mapping_pending_employees.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_branches_for_holiday_list.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_common_branch_list.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employee_list.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employee_performance.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_employees_timesheet_hours.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_header_for_day_wise.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_header_for_hour_wise.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_location.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_notes.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_present_employee.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_public_holiday_list.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_select_location.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_user_app_module.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_user_attendance_history.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_user_list_for_cal_salary.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/row_user_list_to_track_current_location.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/menu/menu_app.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.155" />
+        <entry key="..\:/Users/stcso/Desktop/Attendance App/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1635" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
