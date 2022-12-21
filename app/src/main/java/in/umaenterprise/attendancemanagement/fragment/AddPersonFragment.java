@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -45,6 +47,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.airbnb.lottie.L;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -74,7 +77,10 @@ import java.util.Objects;
 import in.umaenterprise.attendancemanagement.R;
 import in.umaenterprise.attendancemanagement.activity.AdminDashboardActivity;
 import in.umaenterprise.attendancemanagement.activity.ImagePickerActivity;
+import in.umaenterprise.attendancemanagement.adapter.UserAppModulesAdapter;
 import in.umaenterprise.attendancemanagement.application.AttendanceApplication;
+import in.umaenterprise.attendancemanagement.model.AppModuleModel;
+import in.umaenterprise.attendancemanagement.model.LatLong;
 import in.umaenterprise.attendancemanagement.model.LocationModel;
 import in.umaenterprise.attendancemanagement.model.PersonModel;
 import in.umaenterprise.attendancemanagement.model.ShopTimingModel;
@@ -86,10 +92,11 @@ import static in.umaenterprise.attendancemanagement.utils.ConstantData.DEFAULT_F
 import static in.umaenterprise.attendancemanagement.utils.ConstantData.DEFAULT_SHOP_CLOSE_TIME;
 import static in.umaenterprise.attendancemanagement.utils.ConstantData.DEFAULT_SHOP_OPEN_TIME;
 
-public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
 
 
     private static final int REQUEST_IMAGE = 253;
+    private static final String TAG = "SOUVIK";
     private EditText mEtPersonName, mEtPersonAddress, mEtPersonMobileNo, mEtPersonDesignation;
     private CheckBox mCbNotifyForPunchIn,mCbNotifyForPunchOut;
     private EditText mEtPersonDOB, mEtPersonEmailId, mEtPersonPassword;
@@ -131,6 +138,9 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
     private SimpleDateFormat twentyFourHoursFormat = new SimpleDateFormat(ConstantData.TWENTY_FOUR_HOURS_FORMAT, Locale.US);
     private SimpleDateFormat twelveHoursFormat = new SimpleDateFormat(ConstantData.TWELVE_HOURS_FORMAT, Locale.US);
     private int SHOP_TIME_SELECTION_POSITION_DAY_WISE = -1;
+
+    //Add SOUVIK
+    private Spinner area_spinner;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -224,7 +234,12 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
         mEtPersonDesignation = view.findViewById(R.id.et_person_designation);
         mCbNotifyForPunchIn = view.findViewById(R.id.cb_notifiy_for_punch_in);
         mCbNotifyForPunchOut = view.findViewById(R.id.cb_notifiy_for_punch_out);
-
+        // Add SOUVIK
+        area_spinner=view.findViewById(R.id.spinner_work_area);
+        ArrayAdapter<CharSequence> areaAdapter=ArrayAdapter.createFromResource(view.getContext(),R.array.area_array, android.R.layout.simple_spinner_item);
+        areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        area_spinner.setAdapter(areaAdapter);
+        area_spinner.setOnItemSelectedListener(this);
 
         RadioGroup mRgWorkTypeSelection = view.findViewById(R.id.rg_work_Type_selection);
 
@@ -409,7 +424,11 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
             mEtPersonDOB.setText(mPersonModel.getDob());
             mCbNotifyForPunchIn.setChecked(mPersonModel.isNotifyAdminForPunchIn());
             mCbNotifyForPunchOut.setChecked(mPersonModel.isNotifyAdminForPunchOut());
-
+            if(mPersonModel.getWorkArea()==null){
+                area_spinner.setSelection(0);
+            }else {
+                area_spinner.setSelection(Integer.valueOf(mPersonModel.getWorkArea().getBranchCode()));
+            }
             mEtAmount.setText(String.valueOf(mPersonModel.getAmount()));
             if (mPersonModel.getWorkType().equalsIgnoreCase(ConstantData.WORK_TYPE_DAY_WISE)) {
                 mRbWorkTypeDayWise.setChecked(true);
@@ -915,6 +934,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                                 model.setAmount(Integer.valueOf(strAmount));
                                 model.setTimeSlotList(timeSlotList);
                                 model.setTrackingEnable(mSwitchTrackEmployee.isChecked());
+                                model.setWorkArea(mPersonModel.getWorkArea());
 
 
                                     model.setWorkType(ConstantData.WORK_TYPE_MONTH_WISE);
@@ -2029,5 +2049,32 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
         ImagePickerActivity.clearCache(Objects.requireNonNull(getActivity()));
     }
 
+// Add SOUVIK
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        LatLong ll=new LatLong();
+        switch (position){
+            case 0:
+                ll.setBranchName("Any Branch");
+                ll.setBranchCode(String.valueOf(position));
+                ll.setLat(0);
+                ll.setLng(0);
+                ll.setRadius(0);
+                break;
+            case 1:
+                ll.setBranchName("Sadatpur");
+                ll.setBranchCode(String.valueOf(position));
+                ll.setLat(22.649077);
+                ll.setLng(88.141804);
+                ll.setRadius(100);
+                break;
+        }
+        mPersonModel.setWorkArea(ll);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

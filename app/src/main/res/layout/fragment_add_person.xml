@@ -241,7 +241,18 @@
                                 android:inputType="text" />
 
                         </com.google.android.material.textfield.TextInputLayout>
-
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/customTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_five"
+                            android:text="Work Area" />
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/spinner_work_area"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="15dp"
+                            />
 
                         <RelativeLayout
                             android:layout_width="match_parent"

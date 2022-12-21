@@ -95,6 +95,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 15;
+    private static final String TAG = "SOUVIK";
     private ImageView imgVAttendancePunchIn, imgVAttendancePunchOut,
             imgVAttendancePunchComplete;
     private DigitalClock tvAttendanceCurrentTime;
@@ -111,6 +112,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             isPunchOutS2 = false;
     private boolean isLocationChangeTrigger = false;
     private boolean isShift2=false;
+    private boolean isRightLocation=false;
 
     private double dbllat = 0, dbllng = 0;
     private static final int ATTENDANCE_IN_IMAGE = 1007;  //Added by me
@@ -334,6 +336,11 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
     public void onClick(View v) {
         // TODO Auto-generated method stub
         if (v.getId() == R.id.imgVAttendancePunchIn) {
+            if(!isRightLocation){
+                CommonMethods.showAlertDailogueWithOK(getActivity(), "Wrong Location",
+                        String.format("Please go To "+mPersonModel.getWorkArea().getBranchName()+" then punch."), getString(R.string.action_ok));
+                return;
+            }
             if (!SharePreferences.getBool(SharePreferences.KEY_IS_PUNCH, SharePreferences.DEFAULT_BOOLEAN)) {
                 if(isShift2)
                     onProfileImageClick(ATTENDANCE_IN_IMAGES2);
@@ -341,6 +348,11 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                     onProfileImageClick(ATTENDANCE_IN_IMAGE);
             }
         } else if (v.getId() == R.id.imgVAttendancePunchOut) {
+            if(!isRightLocation){
+                CommonMethods.showAlertDailogueWithOK(getActivity(), "Wrong Location",
+                        String.format("Please go To "+mPersonModel.getWorkArea().getBranchName()+" then punch."), getString(R.string.action_ok));
+                return;
+            }
             if (!SharePreferences.getBool(SharePreferences.KEY_IS_PUNCH, SharePreferences.DEFAULT_BOOLEAN)) {
                 if(isShift2)
                     onProfileImageClick(ATTENDANCE_OUT_IMAGES2);
@@ -465,21 +477,24 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                                         tvAttendancePunchInTimeS2.setText(PunchInTimeS2);
                                         tvAttendancePunchOutTimeS2.setText(PunchOutTimeS2);
 
+
                                         if ((mPreviousAttendanceModel.getPunchInTime() != null
                                                 && mPreviousAttendanceModel.getPunchOutTime() != null && mPreviousAttendanceModel.getPunchInTimeS2() != null
                                                 && mPreviousAttendanceModel.getPunchOutTimeS2() != null)||mPreviousAttendanceModel.getPresentDay()==1.0) {
 
                                             MakeGoodByeVisible();
                                         } else {
-
                                             if (mPreviousAttendanceModel.getPunchInTime() == null) {
                                                 MakePunchInVisible();
                                                 isShift2=false;
+
                                             } else if (mPreviousAttendanceModel.getPunchOutTime() == null) {
                                                 MakePunchOutVisible();
                                                 isShift2=false;
+
                                             } else if(mPreviousAttendanceModel.getPunchInTimeS2()==null){
                                                 MakePunchInVisible();
+
                                                 isShift2=true;
                                             }else {
                                                 MakePunchOutVisible();
@@ -752,6 +767,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                 latLong.setLat(dbllat);
                 latLong.setLng(dbllng);
 
+
                 if (isLastLoginCheck && !isFromFusedClientConnect)
                     PunchIn_Out(tvAttendanceCurrentTime.getText().toString(), latLong);
             } catch (Exception e) {
@@ -766,6 +782,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
      */
     private void PunchIn_Out(final String strPunchTime, LatLong latLong) {
         // TODO Auto-generated method stub
+
 
         if (isPunchIn || isPunchOut || isPunchInS2 || isPunchOutS2) {
             String strTitle = "";
@@ -846,6 +863,9 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
+
+
 
             AttendanceModel attendanceModel = new AttendanceModel();
             if (strPunchType.equals("Punch In")) {
@@ -1191,6 +1211,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                     .charAt(index));
         }
 
+
         return sb.toString();
     }
     private void uploadAttendanceDetails(final String strPunchType, AttendanceModel attendanceModel) {
@@ -1411,6 +1432,23 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             mTvCurrentLocationLongitude.setText(String.format("%f", location.getLongitude()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(location.getLatitude(), location.getLongitude()), 13));
+            if(mPersonModel.getWorkArea()!=null){
+                if(mPersonModel.getWorkArea().getBranchCode().equals("0")){
+                    isRightLocation=true;
+                }else {
+                    Location target=new Location("");
+                    target.setLatitude(mPersonModel.getWorkArea().getLat());
+                    target.setLongitude(mPersonModel.getWorkArea().getLng());
+                    Log.d(TAG, "onLocationChanged: "+location.distanceTo(target));
+                    if(location.distanceTo(target)<=mPersonModel.getWorkArea().getRadius()){
+                        isRightLocation=true;
+                    }else {
+                        isRightLocation=false;
+                    }
+                }
+            }else {
+                isRightLocation=true;
+            }
         }
 
         if (isLocationChangeTrigger) {
@@ -1439,6 +1477,13 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         imgVAttendancePunchComplete.setVisibility(View.GONE);
         tvAttendancePunchType.setText(getResources().getString(
                 R.string.frag_attendance_punch_in_now));
+    }
+    private void MakeGoToLocation(){
+        imgVAttendancePunchIn.setVisibility(View.GONE);
+        imgVAttendancePunchOut.setVisibility(View.GONE);
+        imgVAttendancePunchComplete
+                .setVisibility(View.VISIBLE);
+        tvAttendancePunchType.setText("Wrong Location");
     }
 
     private void MakePunchOutVisible() {

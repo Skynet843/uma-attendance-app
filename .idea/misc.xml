@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/drawable/spinner_resource.xml" value="0.2815" />
+        <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_add_person.xml" value="0.25" />
         <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/fragment_calculate_day_wise_salary_by_admin.xml" value="0.24932003626473254" />
+        <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/menu/menu_branches.xml" value="0.29713552800342025" />
+        <entry key="..\:/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/menu/menu_search.xml" value="0.29713552800342025" />
         <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_display_employee_tracking_location_on_map.xml" value="0.32135416666666666" />
         <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_on_boarding.xml" value="0.2291577597263788" />
         <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_splash.xml" value="0.2291577597263788" />

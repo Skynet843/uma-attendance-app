@@ -23,6 +23,17 @@ public class PersonModel implements Serializable {
     private String userType;
     private String currencySymbol;
     private String mappedLocations;
+    // Add SOUVIK
+    private LatLong workArea;
+
+    public LatLong getWorkArea() {
+        return workArea;
+    }
+
+    public void setWorkArea(LatLong workArea) {
+        this.workArea = workArea;
+    }
+    // End SOUVIK
 
     private String deviceId;// Don't change key as its used in PhoneMappingRequestListFragment
     private String userType_mobileNo;//Used for authentication purpose

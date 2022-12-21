@@ -1,4 +1,9 @@
 <resources>
+    //Add SOUVIK
+    <string-array name="area_array">
+        <item>Any Area</item>
+        <item>Sadatpur Bazar</item>
+    </string-array>
     <string name="app_name">UMA Attendance Management</string>
 
     <string name="subscription_period_prompt">Select your subscription period</string>
