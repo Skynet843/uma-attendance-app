@@ -138,7 +138,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
     private SimpleDateFormat twentyFourHoursFormat = new SimpleDateFormat(ConstantData.TWENTY_FOUR_HOURS_FORMAT, Locale.US);
     private SimpleDateFormat twelveHoursFormat = new SimpleDateFormat(ConstantData.TWELVE_HOURS_FORMAT, Locale.US);
     private int SHOP_TIME_SELECTION_POSITION_DAY_WISE = -1;
-
+    private LatLong ll;
     //Add SOUVIK
     private Spinner area_spinner;
 
@@ -427,7 +427,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
             if(mPersonModel.getWorkArea()==null){
                 area_spinner.setSelection(0);
             }else {
-                area_spinner.setSelection(Integer.valueOf(mPersonModel.getWorkArea().getBranchCode()));
+                area_spinner.setSelection(Integer.parseInt(mPersonModel.getWorkArea().getBranchCode()));
             }
             mEtAmount.setText(String.valueOf(mPersonModel.getAmount()));
             if (mPersonModel.getWorkType().equalsIgnoreCase(ConstantData.WORK_TYPE_DAY_WISE)) {
@@ -934,7 +934,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                                 model.setAmount(Integer.valueOf(strAmount));
                                 model.setTimeSlotList(timeSlotList);
                                 model.setTrackingEnable(mSwitchTrackEmployee.isChecked());
-                                model.setWorkArea(mPersonModel.getWorkArea());
+                                model.setWorkArea(ll);
 
 
                                     model.setWorkType(ConstantData.WORK_TYPE_MONTH_WISE);
@@ -2053,7 +2053,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        LatLong ll=new LatLong();
+        ll=new LatLong();
         switch (position){
             case 0:
                 ll.setBranchName("Any Branch");
@@ -2070,7 +2070,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                 ll.setRadius(100);
                 break;
         }
-        mPersonModel.setWorkArea(ll);
+
     }
 
     @Override

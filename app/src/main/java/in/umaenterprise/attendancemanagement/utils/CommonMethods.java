@@ -1220,13 +1220,12 @@ public class CommonMethods {
                                     TotalMinutes = TotalMinutes + ((hours * 60) + minuts);
                                 }
 
-                                cell = new PdfPCell(new Phrase((model.getTotalWorkingHours()==null?model.getTotalWorkingHours():model.getTotalWorkingHours())));
+                                cell = new PdfPCell(new Phrase((model.getTotalWorkingHours())));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
                                 TotalOverTime = TotalOverTime + model.getOverTimeInMinutes();
-                                Log.d("SOUVIK", "run: "+get24HoursFromMinutes((int)model.getOverTimeInMinutesS2()));
                                 if ((int) model.getOverTimeInMinutes() == 0) {
                                     cell = new PdfPCell(new Phrase("-"));
                                 } else {
@@ -1235,6 +1234,12 @@ public class CommonMethods {
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
+
+//                                cell = new PdfPCell(new Phrase("SOUVIK"));
+//                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                                cell.setPadding(5f);
+//                                table.addCell(cell);
+
 
                                 cell = new PdfPCell(new Phrase(type));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
