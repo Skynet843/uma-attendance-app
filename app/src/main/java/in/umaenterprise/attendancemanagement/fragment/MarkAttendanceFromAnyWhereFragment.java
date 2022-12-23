@@ -403,7 +403,9 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         intent.putExtra(ImagePickerActivity.INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, true);
         intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 105000);
         intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 140000);
-
+        Log.d(TAG, "launchCameraIntent: My Fault");
+        Toast.makeText(getActivity(),"My Fault",Toast.LENGTH_SHORT).show();
+        ImagePickerActivity.first_time=true;
         startActivityForResult(intent, code);
     }
 
@@ -697,6 +699,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("AGENT", "onActivityResult: " + requestCode);
+        Log.d("Zero","Go Gobinda");
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 

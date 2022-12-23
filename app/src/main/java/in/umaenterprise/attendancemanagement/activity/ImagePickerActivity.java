@@ -18,14 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.github.dhaval2404.imagepicker.constant.ImageProvider;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropActivity;
-
 import java.io.File;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class ImagePickerActivity extends AppCompatActivity {
     public static final String INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT = "set_bitmap_max_width_height";
     public static final String INTENT_BITMAP_MAX_WIDTH = "max_width";
     public static final String INTENT_BITMAP_MAX_HEIGHT = "max_height";
-
+    public static boolean first_time;
     public static final int REQUEST_IMAGE_CAPTURE = 0;
     public static final int REQUEST_GALLERY_IMAGE = 1;
 
@@ -77,7 +76,6 @@ public class ImagePickerActivity extends AppCompatActivity {
         setBitmapMaxWidthHeight = intent.getBooleanExtra(INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, false);
         bitmapMaxWidth = intent.getIntExtra(INTENT_BITMAP_MAX_WIDTH, bitmapMaxWidth);
         bitmapMaxHeight = intent.getIntExtra(INTENT_BITMAP_MAX_HEIGHT, bitmapMaxHeight);
-
         int requestCode = intent.getIntExtra(INTENT_IMAGE_PICKER_OPTION, -1);
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
             takeCameraImage();
@@ -110,24 +108,15 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
     private String getAlphaNumericString(int n)
     {
-
-        // chose a Character random from this String
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"
                 + "abcdefghijklmnopqrstuvxyz";
-
-        // create StringBuffer size of AlphaNumericString
         StringBuilder sb = new StringBuilder(n);
 
         for (int i = 0; i < n; i++) {
-
-            // generate a random number between
-            // 0 to AlphaNumericString variable length
             int index
                     = (int)(AlphaNumericString.length()
                     * Math.random());
-
-            // add Character one by one in end of sb
             sb.append(AlphaNumericString
                     .charAt(index));
         }
@@ -140,22 +129,16 @@ public class ImagePickerActivity extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        Log.d("SOUVIK", "onPermissionsChecked: Camera Activity");
+                        Log.d("SOUVIK", "onPermissionsChecked: Camera Activity"+first_time);
+                        Toast.makeText(ImagePickerActivity.this, "This is a Goal 3", Toast.LENGTH_SHORT).show();
                         if (report.areAllPermissionsGranted()) {
-
-                            fileName = System.currentTimeMillis() +getAlphaNumericString(10)+ ".jpg";
-                            Log.d("SOUVIK", "onPermissionsChecked: Camera Activity STEP "+fileName);
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, getCacheImagePath(fileName));
-                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                Log.d("SOUVIK", "onPermissionsChecked: Camera Activity STEP2");
-                                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                            if(first_time){
+                                ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
+                                imagePicker.cameraOnly().saveDir(getExternalFilesDir("ImagePicker")).crop(3f,4f).compress(2048).provider(ImageProvider.CAMERA).start();
                             }
-
 
                         }
                     }
-
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
@@ -170,9 +153,8 @@ public class ImagePickerActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(pickPhoto, REQUEST_GALLERY_IMAGE);
+                            ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
+                            imagePicker.galleryOnly().crop(3f, 4f).compress(2048).maxResultSize(1080,1080).start();
                         }
                     }
 
@@ -185,93 +167,28 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(ImagePickerActivity.this, "This is a Goal 1", Toast.LENGTH_SHORT).show();
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("SOUVIK", "onActivityResult: "+requestCode+" "+resultCode);
-        switch (requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == RESULT_OK) {
-                    Log.d("SOUVIK", "onActivityResult: Bokachoda 1");
-                    cropImage(getCacheImagePath(fileName));
-                } else {
-                    Log.d("SOUVIK", "onActivityResult: Bokachoda 1 Error");
-                    setResultCancelled();
-                }
-                break;
-            case REQUEST_GALLERY_IMAGE:
-                if (resultCode == RESULT_OK) {
-                    Uri imageUri = data.getData();
-                    cropImage(imageUri);
-                } else {
-                    setResultCancelled();
-                }
-                break;
-            case UCrop.REQUEST_CROP:
-                if (resultCode == RESULT_OK) {
-                    Log.d("SOUVIK", "onActivityResult: Bokachoda 2");
-                    handleUCropResult(data);
-                } else {
-                    final Throwable cropError = UCrop.getError(data);
-                    Log.e("SOUVIK", "Crop error: " + cropError);
-                    Log.d("SOUVIK", "onActivityResult: Bokachoda 2 Error");
-                    setResultCancelled();
-                }
-                break;
-            case UCrop.RESULT_ERROR:
-                final Throwable cropError = UCrop.getError(data);
-                Log.e("SOUVIK", "Crop error: " + cropError);
+        Toast.makeText(ImagePickerActivity.this, "This is a Goal 2", Toast.LENGTH_SHORT).show();
+        Log.d("TEST", "onActivityResult: COME");
+        if (requestCode == ImagePicker.REQUEST_CODE) {
+            if(resultCode==RESULT_OK){
+                Log.d("TEST", "onActivityResult: Result OK");
+                setResultOk(data.getData());
+            }else {
                 setResultCancelled();
-                break;
-            default:
-                setResultCancelled();
-        }
-    }
+            }
 
-    private void cropImage(Uri sourceUri) {
-        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), queryName(getContentResolver(), sourceUri)));
-        UCrop.Options options = new UCrop.Options();
-        options.setCompressionQuality(IMAGE_COMPRESSION);
-
-        // applying UI theme
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));
-
-        if (!crop){
-            options.setHideBottomControls(true);
-            options.setAllowedGestures(UCropActivity.NONE, UCropActivity.NONE, UCropActivity.NONE);
-        }
-
-        if (lockAspectRatio)
-            options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);
-
-        if (setBitmapMaxWidthHeight)
-            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight);
-        Log.d("SOUVIK", "crop: "+destinationUri.toString());
-        UCrop.of(sourceUri, destinationUri)
-                .withOptions(options)
-                .start(this);
-        Log.d("SOUVIK", "crop: "+destinationUri.toString());
-    }
-
-    private void handleUCropResult(Intent data) {
-        Log.d("SOUVIK", "handleUCropResult: ");
-        if (data == null) {
+        } else {
             setResultCancelled();
-            return;
         }
-        final Uri resultUri = UCrop.getOutput(data);
-
-
-        setResultOk(resultUri);
-
     }
-
     private void setResultOk(Uri imagePath) {
-        Log.d("AGENT", "onActivityResult: Boom Result Ok");
-        Intent intent = new Intent();
-        intent.putExtra("path", imagePath);
-        setResult(Activity.RESULT_OK, intent);
-        finish();
+            Log.d("AGENT", "onActivityResult: Boom Result Ok");
+            Intent intent = new Intent();
+            intent.putExtra("path", imagePath);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
     }
 
     private void setResultCancelled() {

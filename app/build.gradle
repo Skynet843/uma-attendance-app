@@ -4,7 +4,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId 'in.umaenterprise.attendancemanagement'
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 12
         versionName '11.0'
@@ -80,7 +80,7 @@ dependencies {
     //Lottie file
     implementation 'com.airbnb.android:lottie:3.0.7'
     //Image Cropping
-    implementation 'com.github.yalantis:ucrop:2.2.2'
+//    implementation 'com.github.yalantis:ucrop:2.2.2'
     // circular imageview
     implementation 'com.mikhaellopez:circularimageview:4.0.1'
     //Glide
@@ -111,6 +111,7 @@ dependencies {
 
 
 
+    implementation 'com.github.dhaval2404:imagepicker-support:1.7.1'
 
 
 
