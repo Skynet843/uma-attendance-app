@@ -2,7 +2,13 @@
     //Add SOUVIK
     <string-array name="area_array">
         <item>Any Area</item>
-        <item>Sadatpur Bazar</item>
+        <item>Bargachia Counter</item>
+        <item>Amta Store</item>
+        <item>Penro Store</item>
+        <item>Ranihati Appliance Counter</item>
+        <item>Ranihati Mobile Counter</item>
+        <item>Ranihati Uma Motors</item>
+        <item>Gangadhar Pur Counter</item>
     </string-array>
     <string name="app_name">UMA Attendance Management</string>
 
