@@ -124,52 +124,20 @@ public class ImagePickerActivity extends AppCompatActivity {
         return sb.toString();
     }
     private void takeCameraImage() {
-        Dexter.withContext(this)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        Log.d("SOUVIK", "onPermissionsChecked: Camera Activity"+first_time);
-                        Toast.makeText(ImagePickerActivity.this, "This is a Goal 3", Toast.LENGTH_SHORT).show();
-                        if (report.areAllPermissionsGranted()) {
-                            if(first_time){
-                                ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
-                                imagePicker.cameraOnly().saveDir(getExternalFilesDir("ImagePicker")).crop(3f,4f).compress(2048).provider(ImageProvider.CAMERA).start();
-                            }
-
-                        }
-                    }
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
+        if(first_time){
+            first_time=false;
+            ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
+            imagePicker.cameraOnly().saveDir(getExternalFilesDir("ImagePicker")).crop(3f,4f).compress(2048).provider(ImageProvider.CAMERA).start();
+        }
     }
 
     private void chooseImageFromGallery() {
-        Dexter.withContext(this)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
-                            imagePicker.galleryOnly().crop(3f, 4f).compress(2048).maxResultSize(1080,1080).start();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-
+        ImagePicker.Builder imagePicker=new ImagePicker.Builder(ImagePickerActivity.this);
+        imagePicker.galleryOnly().crop(3f, 4f).compress(2048).maxResultSize(1080,1080).start();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(ImagePickerActivity.this, "This is a Goal 1", Toast.LENGTH_SHORT).show();
         super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(ImagePickerActivity.this, "This is a Goal 2", Toast.LENGTH_SHORT).show();
         Log.d("TEST", "onActivityResult: COME");
         if (requestCode == ImagePicker.REQUEST_CODE) {
             if(resultCode==RESULT_OK){
@@ -184,7 +152,6 @@ public class ImagePickerActivity extends AppCompatActivity {
         }
     }
     private void setResultOk(Uri imagePath) {
-            Log.d("AGENT", "onActivityResult: Boom Result Ok");
             Intent intent = new Intent();
             intent.putExtra("path", imagePath);
             setResult(Activity.RESULT_OK, intent);
@@ -192,8 +159,6 @@ public class ImagePickerActivity extends AppCompatActivity {
     }
 
     private void setResultCancelled() {
-        Log.d("SOUVIK", "onActivityResult: Boom Result Ok");
-        Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
         setResult(Activity.RESULT_CANCELED, intent);
         finish();
