@@ -83,6 +83,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -1076,10 +1077,10 @@ public class CommonMethods {
                     doc.add(preface);
 
                     try {
-                        PdfPTable table = new PdfPTable(6);
+                        PdfPTable table = new PdfPTable(7);
                         // 100.0f mean width of table is same as Document size
                         table.setWidthPercentage(100.0f);
-                        float[] columnWidth = new float[]{18, 8, 26, 12, 13, 23};
+                        float[] columnWidth = new float[]{16, 8, 24, 10, 11,12, 19};
                         table.setWidths(columnWidth);
 
                         PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("DATE", smallBold)));
@@ -1107,6 +1108,11 @@ public class CommonMethods {
                         cell.setPadding(5f);
                         table.addCell(cell);
 
+                        cell = new PdfPCell(new Paragraph(new Chunk("LESS\nTIME", smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
                         cell = new PdfPCell(new Paragraph(new Chunk("TYPE", smallBold)));
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
@@ -1121,6 +1127,7 @@ public class CommonMethods {
                         double TotalPresentDay = 0;
                         double TotalHalfDayDay = 0;
                         for (int i = 0; i < length; i++) {
+                            Log.d("SOUVIK", "createPDF: GOD");
                             model = mTransactionList.get(i);
 
                             if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
@@ -1154,6 +1161,12 @@ public class CommonMethods {
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("-"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
 
                                 cell = new PdfPCell(new Phrase(model.getType()));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1192,9 +1205,10 @@ public class CommonMethods {
                                     TotalPresentDay++;
                                 } else if (model.getPresentDay() == 0) {
                                     type = activity.getString(R.string.label_present_but_leave);
-                                } else if (model.getPresentDay() == 0.5) {
+                                } else if (model.getPresentDay() == 0.5) { 
                                     type = activity.getString(R.string.label_half_days);
-                                    TotalHalfDayDay = TotalHalfDayDay = 0.5;
+                                    TotalHalfDayDay = 0.5;
+                                    TotalPresentDay+=0.5;
                                 }
 
 
@@ -1213,12 +1227,16 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
+                                int totalWorkMinuteLocal=0;
                                 if (model.getTotalWorkingHours() != null) {
                                     String[] split = model.getTotalWorkingHours().split(":");
                                     Integer hours = Integer.valueOf(split[0]);
                                     Integer minuts = Integer.valueOf(split[1]);
+                                    totalWorkMinuteLocal=((hours * 60) + minuts);
                                     TotalMinutes = TotalMinutes + ((hours * 60) + minuts);
                                 }
+
+
 
                                 cell = new PdfPCell(new Phrase((model.getTotalWorkingHours())));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1235,11 +1253,39 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
-//                                cell = new PdfPCell(new Phrase("SOUVIK"));
-//                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                                cell.setPadding(5f);
-//                                table.addCell(cell);
 
+                                // Extract Date
+
+                                Date d1=new Date(model.getPunchDateInMillis());
+                                int dayNo=d1.getDay();
+                                dayNo=dayNo-2<0?6:dayNo-2;
+                                int fullDayWork=0;
+                                if(mPersonModel.getTimeSlotList().get(dayNo)!=null){
+                                    String fs=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDay();
+                                    String ss=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDayS2();
+                                    String[] split=fs.split(":");
+                                    if(split.length>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+
+                                    split=ss.split(":");
+                                    if(ss.length()>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+                                }
+                                int lessTime=Math.max(fullDayWork-totalWorkMinuteLocal,0);
+                                if (lessTime == 0) {
+                                    cell = new PdfPCell(new Phrase("-"));
+                                } else {
+                                    cell = new PdfPCell(new Phrase(get24HoursFromMinutes(lessTime)));
+                                }
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
 
                                 cell = new PdfPCell(new Phrase(type));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1247,6 +1293,7 @@ public class CommonMethods {
                                 table.addCell(cell);
                             }
                         }
+
 
 
                         cell = new PdfPCell(new Paragraph(new Chunk("TOTAL", smallBold)));
@@ -1284,6 +1331,11 @@ public class CommonMethods {
 
                         cell = new PdfPCell(new Paragraph(
                                 new Chunk(get24HoursFromMinutes((int) TotalOverTime), smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Paragraph(""));
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
                         table.addCell(cell);
