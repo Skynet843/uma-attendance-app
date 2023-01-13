@@ -8,6 +8,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -222,6 +223,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                             SharePreferences.setBool(SharePreferences.KEY_IS_PUNCH, false);
                             Bundle bundle2 = new Bundle();
                             bundle2.putSerializable("PersonModel", mPersonModel);
+
                             loadFragment(new MarkAttendanceFromAnyWhereFragment(), bundle2);
                         }
                         break;
@@ -645,7 +647,6 @@ public class UserDashboardActivity extends AppCompatActivity {
 
 
     public void loadFragment(Fragment fragment, Bundle bundle) {
-
         if (fragment != null) {
             fragment.setArguments(bundle);
             try {

@@ -404,7 +404,6 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 105000);
         intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 140000);
         Log.d(TAG, "launchCameraIntent: My Fault");
-        Toast.makeText(getActivity(),"My Fault",Toast.LENGTH_SHORT).show();
         ImagePickerActivity.first_time=true;
         startActivityForResult(intent, code);
     }
@@ -787,10 +786,10 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         // TODO Auto-generated method stub
 
 
+
         if (isPunchIn || isPunchOut || isPunchInS2 || isPunchOutS2) {
             String strTitle = "";
             Spanned strMessage;
-
             if (isPunchIn) {
                 strTitle = getString(R.string.alert_title_punch_in);
                 strMessage = Html.fromHtml(String.format(getString(R.string.alert_msg_punch_in), strPunchTime));

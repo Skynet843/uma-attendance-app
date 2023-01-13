@@ -116,21 +116,24 @@ public class SplashActivity extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,
                                                     int id) {
-                                    final String appPackageName = getPackageName(); // package name of the app
-
-                                    try {
-
-                                        Uri uri = Uri.parse("market://details?id=" + appPackageName);
-                                        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-                                        // To count with Play market backstack, After pressing back button,
-                                        // to taken back to our application, we need to add following flags to intent.
-                                        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                                                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                                        startActivity(goToMarket);
-                                    } catch (ActivityNotFoundException e) {
-                                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-                                    }
+//                                    final String appPackageName = getPackageName(); // package name of the app
+//
+//                                    try {
+//
+//                                        Uri uri = Uri.parse("market://details?id=" + appPackageName);
+//                                        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+//                                        // To count with Play market backstack, After pressing back button,
+//                                        // to taken back to our application, we need to add following flags to intent.
+//                                        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+//                                                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//                                        startActivity(goToMarket);
+//                                    } catch (ActivityNotFoundException e) {
+//                                        startActivity(new Intent(Intent.ACTION_VIEW,
+//                                                Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+//                                    }
+                                    String latestAppLink = (String) mFirebaseRemoteConfig.getString("Latest_Application_Link");
+                                    startActivity(new Intent(Intent.ACTION_VIEW,
+                                                Uri.parse(latestAppLink)));
                                 }
                             })
                     .setNegativeButton(R.string.action_cancel,

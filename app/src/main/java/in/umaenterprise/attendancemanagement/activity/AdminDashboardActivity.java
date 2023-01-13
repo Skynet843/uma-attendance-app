@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +26,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,10 +47,19 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.whiteelephant.monthpicker.MonthPickerDialog;
 
+import org.apache.poi.ss.formula.functions.T;
+import org.w3c.dom.Text;
+
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -72,6 +85,8 @@ import in.umaenterprise.attendancemanagement.fragment.UserListForCalculateSalary
 import in.umaenterprise.attendancemanagement.fragment.UserListToTrackEmployeeCurrentLocationFragment;
 import in.umaenterprise.attendancemanagement.fragment.ViewAllEmployeesFragment;
 import in.umaenterprise.attendancemanagement.model.AppModuleModel;
+import in.umaenterprise.attendancemanagement.model.AttendanceModel;
+import in.umaenterprise.attendancemanagement.model.PersonModel;
 import in.umaenterprise.attendancemanagement.utils.CommonMethods;
 import in.umaenterprise.attendancemanagement.utils.ConstantData;
 import in.umaenterprise.attendancemanagement.utils.SharePreferences;
@@ -119,7 +134,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
 
     private void init() {
 
-        String strModuleResult = "[{'ModuleName':'Add Holidays','ModuleDesc':'Add public holidays only','ModuleColor':'#2EA752','ModuleId':2,'VersionCode':13},{'ModuleName':'Add Employee','ModuleDesc':'Add Employee for whose wants to mark attendance','ModuleColor':'#E00166','ModuleId':3,'VersionCode':13},{'ModuleName':'View Employees','ModuleDesc':'List of registered employees','ModuleColor':'#5788A6','ModuleId':4,'VersionCode':0},{'ModuleName':'Today Present Employees','ModuleDesc':'Check date wise all registered employees presence or punch in/out','ModuleColor':'#5788A6','ModuleId':5,'VersionCode':0},{'ModuleName':'Calculate Salary','ModuleDesc':'Check month wise attendance & calculate salary for particular employee','ModuleColor':'#298ACB','ModuleId':6,'VersionCode':0},{'ModuleName':'View Attendance Report','ModuleDesc':'Check months wise employees attendance reports in Chart format','ModuleColor':'#298ACB','ModuleId':7,'VersionCode':12},{'ModuleName':'Live Tracking','ModuleDesc':'Track only current location of employee','ModuleColor':'#F4AA11','ModuleId':8,'VersionCode':0},{'ModuleName':'Change Password','ModuleDesc':'Allow to change your password','ModuleColor':'#F4AA11','ModuleId':9,'VersionCode':0}]";
+        String strModuleResult = "[{'ModuleName':'Add Holidays','ModuleDesc':'Add public holidays only','ModuleColor':'#2EA752','ModuleId':2,'VersionCode':13},{'ModuleName':'Add Employee','ModuleDesc':'Add Employee for whose wants to mark attendance','ModuleColor':'#E00166','ModuleId':3,'VersionCode':13},{'ModuleName':'View Employees','ModuleDesc':'List of registered employees','ModuleColor':'#5788A6','ModuleId':4,'VersionCode':0},{'ModuleName':'Today Present Employees','ModuleDesc':'Check date wise all registered employees presence or punch in/out','ModuleColor':'#5788A6','ModuleId':5,'VersionCode':0},{'ModuleName':'Calculate Salary','ModuleDesc':'Check month wise attendance & calculate salary for particular employee','ModuleColor':'#298ACB','ModuleId':6,'VersionCode':0},{'ModuleName':'View Attendance Report','ModuleDesc':'Check months wise employees attendance reports in Chart format','ModuleColor':'#298ACB','ModuleId':7,'VersionCode':12},{'ModuleName':'Live Tracking','ModuleDesc':'Track only current location of employee','ModuleColor':'#F4AA11','ModuleId':8,'VersionCode':0},{'ModuleName':'Change Password','ModuleDesc':'Allow to change your password','ModuleColor':'#F4AA11','ModuleId':9,'VersionCode':0},{'ModuleName':'Generate Employee Details','ModuleDesc':'This Generate All Employee Details At Once','ModuleColor':'#F4AA11','ModuleId':10,'VersionCode':0}]";
         ArrayList<AppModuleModel> modulesList = new ArrayList<>();
         try {
             Type listType = new TypeToken<List<AppModuleModel>>() {
@@ -200,6 +215,8 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
                     case 9://Change Password
                         showPasswordChangeDialog();
                         break;
+                    case 10:
+                        showEmployeeDetailsGenerator();
                     default:
                         break;
 
@@ -585,6 +602,168 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
     protected void onDestroy() {
         super.onDestroy();
         System.gc();
+    }
+
+    private void showEmployeeDetailsGenerator() {
+
+        //before inflating the custom alert dialog layout, we will get the current activity viewgroup
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        //then we will inflate the custom alert dialog xml that we created
+        final View dialogView = LayoutInflater.from(this)
+                .inflate(R.layout.dialog_generate_employee_sheet, viewGroup, false);
+        final CardView cvMonth = dialogView.findViewById(R.id.cv_end_date);
+        final TextView tvMonth =dialogView.findViewById(R.id.tv_selected_to_month);
+        RelativeLayout rlAddContainer = dialogView.findViewById(R.id.rl_adContainer);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, R.style.CustomDialogTheme);
+        alertDialogBuilder.setTitle("Generate Employee Details");
+        alertDialogBuilder.setView(dialogView);
+        alertDialogBuilder
+                .setPositiveButton("GENERATE", null)
+                .setNegativeButton(getString(R.string.action_cancel), null);
+
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                cvMonth.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setDate(tvMonth);
+                    }
+                });
+                Button btnPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                btnPositive.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("SOUVIK", "onClick: "+tvMonth.getText().toString());
+                        createAllEmployeeSheet(tvMonth.getText().toString(),alertDialog);
+                    }
+                });
+
+                Button btnNegative = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                btnNegative.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        });
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
+    }
+    private void setDate(TextView tv) {
+        Calendar today = Calendar.getInstance();
+        MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(AdminDashboardActivity.this, new MonthPickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(int selectedMonth, int selectedYear) {
+
+                Date selectedMonthYearDate = null;
+                try {
+                    selectedMonthYearDate = new SimpleDateFormat("MM/yyyy", Locale.US).parse(selectedMonth + 1 + "/" + selectedYear);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (selectedMonthYearDate != null) {
+                    String selectedMonthYear = new SimpleDateFormat(ConstantData.MONTH_YEAR_FORMAT, Locale.US).format(selectedMonthYearDate);
+                    tv.setText(selectedMonthYear);
+                }
+            }
+        }, today.get(Calendar.YEAR), today.get(Calendar.MONTH));
+
+        builder.setActivatedMonth(today.get(Calendar.MONTH))
+                .setMinYear(2019)
+                .setActivatedYear(today.get(Calendar.YEAR))
+                .setMaxYear(today.get(Calendar.YEAR))
+                .setMinMonth(Calendar.FEBRUARY)
+                .setTitle(getString(R.string.alert_title_select_month))
+                .setMonthRange(Calendar.JANUARY, Calendar.DECEMBER)
+                .build()
+                .show();
+    }
+
+
+    private void addEmployeeDetailsOnList(ArrayList<ArrayList<AttendanceModel>> listForAttendance,String month,int currentID,ArrayList<String> personID,AlertDialog alertDialog){
+        AttendanceApplication.refCompanyUserAttendanceDetails
+                .child(personID.get(currentID))
+                .child(month)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ArrayList<AttendanceModel> newList=new ArrayList<>();
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                AttendanceModel detailModel = ds.getValue(AttendanceModel.class);
+                                newList.add(detailModel);
+                            }
+                            listForAttendance.add(newList);
+
+                        }
+                        if(personID.size()-1==currentID){
+                            if(listForAttendance.size()==0){
+                                alertDialog.dismiss();
+                                CommonMethods.cancelProgressDialog();
+                                Toast.makeText(AdminDashboardActivity.this,"Sorry Not Data Available for "+month,Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            try {
+                                new CommonMethods().createAllEmployeeSheet(AdminDashboardActivity.this,listForAttendance,month);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            File outputFile = new File(AdminDashboardActivity.this.getExternalFilesDir("CSVZip") + "/All Employee Details_"+month+".zip");
+
+                            Uri uri;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                uri = FileProvider.getUriForFile(getApplicationContext(), AdminDashboardActivity.this.getPackageName() + ".provider", outputFile);
+                            } else {
+                                uri = Uri.fromFile(outputFile);
+                            }
+                            alertDialog.dismiss();
+                            CommonMethods.cancelProgressDialog();
+
+                            Intent shareIntent = new Intent();
+                            shareIntent.setAction(Intent.ACTION_SEND);
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                            shareIntent.setType("application/*");
+                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            AdminDashboardActivity.this.startActivity(Intent.createChooser(shareIntent, "Share ..."));
+                        }else {
+                            addEmployeeDetailsOnList(listForAttendance,month,currentID+1,personID,alertDialog);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        alertDialog.dismiss();
+                        CommonMethods.cancelProgressDialog();
+                    }
+                });
+    }
+    private void createAllEmployeeSheet(String month,AlertDialog alertDialog) {
+        CommonMethods.showProgressDialog(AdminDashboardActivity.this);
+        AttendanceApplication.refCompanyUserDetails.orderByChild("userType").equalTo(ConstantData.TYPE_USER)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    ArrayList<String> personID=new ArrayList<>();
+                                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                                        PersonModel personModel=ds.getValue(PersonModel.class);
+                                        assert personModel != null;
+                                        personModel.setFirebaseKey(ds.getKey());
+                                        personID.add(personModel.getFirebaseKey());
+                                    }
+                                    addEmployeeDetailsOnList(new ArrayList<ArrayList<AttendanceModel>>() ,month,0,personID,alertDialog);
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                alertDialog.dismiss();
+                                CommonMethods.cancelProgressDialog();
+                            }
+                        });
     }
 
 }

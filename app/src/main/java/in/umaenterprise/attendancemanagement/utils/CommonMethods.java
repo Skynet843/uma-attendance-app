@@ -1,5 +1,5 @@
 package in.umaenterprise.attendancemanagement.utils;
-
+import java.io.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -63,7 +63,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -83,6 +89,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -1076,10 +1083,10 @@ public class CommonMethods {
                     doc.add(preface);
 
                     try {
-                        PdfPTable table = new PdfPTable(6);
+                        PdfPTable table = new PdfPTable(7);
                         // 100.0f mean width of table is same as Document size
                         table.setWidthPercentage(100.0f);
-                        float[] columnWidth = new float[]{18, 8, 26, 12, 13, 23};
+                        float[] columnWidth = new float[]{16, 8, 24, 10, 11,12, 19};
                         table.setWidths(columnWidth);
 
                         PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("DATE", smallBold)));
@@ -1107,6 +1114,11 @@ public class CommonMethods {
                         cell.setPadding(5f);
                         table.addCell(cell);
 
+                        cell = new PdfPCell(new Paragraph(new Chunk("LESS\nTIME", smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
                         cell = new PdfPCell(new Paragraph(new Chunk("TYPE", smallBold)));
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
@@ -1121,6 +1133,7 @@ public class CommonMethods {
                         double TotalPresentDay = 0;
                         double TotalHalfDayDay = 0;
                         for (int i = 0; i < length; i++) {
+                            Log.d("SOUVIK", "createPDF: GOD");
                             model = mTransactionList.get(i);
 
                             if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
@@ -1154,6 +1167,12 @@ public class CommonMethods {
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("-"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
 
                                 cell = new PdfPCell(new Phrase(model.getType()));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1192,9 +1211,10 @@ public class CommonMethods {
                                     TotalPresentDay++;
                                 } else if (model.getPresentDay() == 0) {
                                     type = activity.getString(R.string.label_present_but_leave);
-                                } else if (model.getPresentDay() == 0.5) {
+                                } else if (model.getPresentDay() == 0.5) { 
                                     type = activity.getString(R.string.label_half_days);
-                                    TotalHalfDayDay = TotalHalfDayDay = 0.5;
+                                    TotalHalfDayDay = 0.5;
+                                    TotalPresentDay+=0.5;
                                 }
 
 
@@ -1213,12 +1233,16 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
+                                int totalWorkMinuteLocal=0;
                                 if (model.getTotalWorkingHours() != null) {
                                     String[] split = model.getTotalWorkingHours().split(":");
                                     Integer hours = Integer.valueOf(split[0]);
                                     Integer minuts = Integer.valueOf(split[1]);
+                                    totalWorkMinuteLocal=((hours * 60) + minuts);
                                     TotalMinutes = TotalMinutes + ((hours * 60) + minuts);
                                 }
+
+
 
                                 cell = new PdfPCell(new Phrase((model.getTotalWorkingHours())));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1235,11 +1259,39 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
-//                                cell = new PdfPCell(new Phrase("SOUVIK"));
-//                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-//                                cell.setPadding(5f);
-//                                table.addCell(cell);
 
+                                // Extract Date
+
+                                Date d1=new Date(model.getPunchDateInMillis());
+                                int dayNo=d1.getDay();
+                                dayNo=dayNo-2<0?6:dayNo-2;
+                                int fullDayWork=0;
+                                if(mPersonModel.getTimeSlotList().get(dayNo)!=null){
+                                    String fs=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDay();
+                                    String ss=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDayS2();
+                                    String[] split=fs.split(":");
+                                    if(split.length>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+
+                                    split=ss.split(":");
+                                    if(ss.length()>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+                                }
+                                int lessTime=Math.max(fullDayWork-totalWorkMinuteLocal,0);
+                                if (lessTime == 0) {
+                                    cell = new PdfPCell(new Phrase("-"));
+                                } else {
+                                    cell = new PdfPCell(new Phrase(get24HoursFromMinutes(lessTime)));
+                                }
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
 
                                 cell = new PdfPCell(new Phrase(type));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1247,6 +1299,7 @@ public class CommonMethods {
                                 table.addCell(cell);
                             }
                         }
+
 
 
                         cell = new PdfPCell(new Paragraph(new Chunk("TOTAL", smallBold)));
@@ -1284,6 +1337,11 @@ public class CommonMethods {
 
                         cell = new PdfPCell(new Paragraph(
                                 new Chunk(get24HoursFromMinutes((int) TotalOverTime), smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Paragraph(""));
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
                         table.addCell(cell);
@@ -2586,6 +2644,56 @@ public class CommonMethods {
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
+    }
+
+
+    public void createAllEmployeeSheet(Context context,ArrayList<ArrayList<AttendanceModel>> listForAttendance,String mo) throws IOException{
+        try {
+            ArrayList<File> listOfFilePath=new ArrayList<>();
+            for(ArrayList<AttendanceModel> list:listForAttendance){
+                String name=list.get(0).getPersonName();
+                File file = new File(context.getExternalFilesDir("CSVArea")+"/"+name+"_Data_"+mo+".csv");
+                listOfFilePath.add(file);
+                FileWriter output_file = new FileWriter(file);
+                CSVWriter writer = new CSVWriter(output_file);
+
+                // adding header to csv
+                String[] header1 = { "", name, "" };
+                writer.writeNext(header1);
+                String[] header = { "Day of Month", "Total Work Hour", "Present Day","Over Time" };
+                writer.writeNext(header);
+                // add data to csv
+                for( AttendanceModel model:list){
+
+                    String[] data=new String[4];
+                    data[0]=model.getPunchDate()+"";
+                    data[1]=model.getTotalWorkingHours()+"";
+                    data[2]=model.getPresentDay()+"";
+                    data[3]=get24HoursFromMinutes((int) model.getOverTimeInMinutes());
+                    writer.writeNext(data);
+                }
+                writer.close();
+            }
+            String[] s = new String[listOfFilePath.size()];
+
+            for (int i = 0; i < listOfFilePath.size(); i++) {
+                s[i] = listOfFilePath.get(i).getAbsolutePath();
+            }
+            ZipManager.zip(s, context.getExternalFilesDir("CSVZip") + "/All Employee Details_"+mo+".zip");
+
+            for (File file : listOfFilePath) {
+                if(file.exists()){
+                    file.delete();
+                }
+            }
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(context, "Fail It",Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     // navigating user to app settings
