@@ -2111,6 +2111,13 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                 ll.setLng(88.153512933333);
                 ll.setRadius(150);
                 break;
+            case 8:
+                ll.setBranchName("Warehouse");
+                ll.setBranchCode(String.valueOf(position));
+                ll.setLat(22.586644);
+                ll.setLng(88.153602);
+                ll.setRadius(1000);
+                break;
         }
 
     }

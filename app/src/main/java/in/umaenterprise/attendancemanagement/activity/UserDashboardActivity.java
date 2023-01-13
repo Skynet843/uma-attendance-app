@@ -647,7 +647,6 @@ public class UserDashboardActivity extends AppCompatActivity {
 
 
     public void loadFragment(Fragment fragment, Bundle bundle) {
-        MarkAttendanceFromAnyWhereFragment.first_time=true;
         if (fragment != null) {
             fragment.setArguments(bundle);
             try {

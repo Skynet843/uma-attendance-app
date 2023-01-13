@@ -1,5 +1,5 @@
 package in.umaenterprise.attendancemanagement.utils;
-
+import java.io.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -63,7 +63,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -2638,6 +2644,56 @@ public class CommonMethods {
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
+    }
+
+
+    public void createAllEmployeeSheet(Context context,ArrayList<ArrayList<AttendanceModel>> listForAttendance,String mo) throws IOException{
+        try {
+            ArrayList<File> listOfFilePath=new ArrayList<>();
+            for(ArrayList<AttendanceModel> list:listForAttendance){
+                String name=list.get(0).getPersonName();
+                File file = new File(context.getExternalFilesDir("CSVArea")+"/"+name+"_Data_"+mo+".csv");
+                listOfFilePath.add(file);
+                FileWriter output_file = new FileWriter(file);
+                CSVWriter writer = new CSVWriter(output_file);
+
+                // adding header to csv
+                String[] header1 = { "", name, "" };
+                writer.writeNext(header1);
+                String[] header = { "Day of Month", "Total Work Hour", "Present Day","Over Time" };
+                writer.writeNext(header);
+                // add data to csv
+                for( AttendanceModel model:list){
+
+                    String[] data=new String[4];
+                    data[0]=model.getPunchDate()+"";
+                    data[1]=model.getTotalWorkingHours()+"";
+                    data[2]=model.getPresentDay()+"";
+                    data[3]=get24HoursFromMinutes((int) model.getOverTimeInMinutes());
+                    writer.writeNext(data);
+                }
+                writer.close();
+            }
+            String[] s = new String[listOfFilePath.size()];
+
+            for (int i = 0; i < listOfFilePath.size(); i++) {
+                s[i] = listOfFilePath.get(i).getAbsolutePath();
+            }
+            ZipManager.zip(s, context.getExternalFilesDir("CSVZip") + "/All Employee Details_"+mo+".zip");
+
+            for (File file : listOfFilePath) {
+                if(file.exists()){
+                    file.delete();
+                }
+            }
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Toast.makeText(context, "Fail It",Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     // navigating user to app settings

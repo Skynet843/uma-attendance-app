@@ -93,7 +93,7 @@ import in.umaenterprise.attendancemanagement.utils.SharePreferences;
 public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, OnMapReadyCallback {
-    public static boolean first_time=true;
+
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 15;
     private static final String TAG = "SOUVIK";
     private ImageView imgVAttendancePunchIn, imgVAttendancePunchOut,
@@ -790,12 +790,6 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
         if (isPunchIn || isPunchOut || isPunchInS2 || isPunchOutS2) {
             String strTitle = "";
             Spanned strMessage;
-            Log.d(TAG, "PunchIn_Out: GOAL "+first_time);
-            if(!first_time) {
-                return;
-            }else {
-                first_time = false;
-            }
             if (isPunchIn) {
                 strTitle = getString(R.string.alert_title_punch_in);
                 strMessage = Html.fromHtml(String.format(getString(R.string.alert_msg_punch_in), strPunchTime));
