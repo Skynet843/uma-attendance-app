@@ -6,8 +6,8 @@ android {
         applicationId 'in.umaenterprise.attendancemanagement'
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 14
-        versionName '14.0'
+        versionCode 17
+        versionName '17.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // Enabling multidex support.
         multiDexEnabled true

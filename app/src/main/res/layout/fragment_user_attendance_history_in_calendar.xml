@@ -386,7 +386,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/bottomSheetLayout"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="340dp"
         android:layout_margin="@dimen/dimen_five"
         android:orientation="vertical"
         app:behavior_hideable="false"
@@ -460,10 +460,10 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/colorDivider"/>
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0.5dp"-->
+<!--                    android:background="@color/colorDivider"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -522,10 +522,10 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/colorDivider"/>
+<!--                <View-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0.5dp"-->
+<!--                    android:background="@color/colorDivider"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -562,7 +562,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:visibility="gone"
+
                     android:layout_marginLeft="@dimen/dimen_ten"
                     android:padding="@dimen/dimen_five">
 
@@ -585,7 +585,45 @@
                         style="@style/customTextView"
                         android:textSize="16sp" />
                 </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/colorDivider"/>
+                <LinearLayout
+                    android:id="@+id/ll_admin_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/dimen_ten"
+                    android:padding="@dimen/dimen_five">
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/customTextView"
+                            android:text="@string/admin_note_text"
+                            android:minWidth="100dp"
+                            android:textColor="@color/colorSecondaryText"
+                            android:textSize="16sp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/customTextView"
+                            android:text=":"
+                            android:minWidth="30dp"
+                            android:gravity="center_horizontal"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_admin_note"
+                        style="@style/customTextView"
+                        android:text=""
+                        android:textSize="16sp" />
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -607,7 +645,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
 
-
+                android:layout_marginLeft="10dp"
                 android:layout_marginRight="15dp"
 
                 android:layout_toStartOf="@+id/btn_edit_attendance_bottom_sheet_view"

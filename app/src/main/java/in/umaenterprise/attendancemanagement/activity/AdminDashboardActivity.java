@@ -683,7 +683,8 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
                 .build()
                 .show();
     }
-
+    private SimpleDateFormat format = new SimpleDateFormat(ConstantData.DATE_FORMAT,Locale.US);
+    private SimpleDateFormat ddFormat = new SimpleDateFormat("dd",Locale.US);
 
     private void addEmployeeDetailsOnList(ArrayList<ArrayList<AttendanceModel>> listForAttendance,String month,int currentID,ArrayList<String> personID,AlertDialog alertDialog){
         AttendanceApplication.refCompanyUserAttendanceDetails
@@ -696,8 +697,20 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
                             ArrayList<AttendanceModel> newList=new ArrayList<>();
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                 AttendanceModel detailModel = ds.getValue(AttendanceModel.class);
+                                Date date = null;
+                                try {
+                                    date = format.parse(detailModel.getPunchDate());
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                if (date != null) {
+                                    detailModel.setDate(detailModel.getPunchDate());
+                                    detailModel.setDay(Integer.valueOf(ddFormat.format(date)));
+                                    detailModel.setTransactionAdded(true);
+                                }
                                 newList.add(detailModel);
                             }
+
                             listForAttendance.add(newList);
 
                         }

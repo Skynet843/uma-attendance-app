@@ -1,6 +1,7 @@
 package in.umaenterprise.attendancemanagement.fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -481,9 +482,9 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
 
                                         if ((mPreviousAttendanceModel.getPunchInTime() != null
                                                 && mPreviousAttendanceModel.getPunchOutTime() != null && mPreviousAttendanceModel.getPunchInTimeS2() != null
-                                                && mPreviousAttendanceModel.getPunchOutTimeS2() != null)||mPreviousAttendanceModel.getPresentDay()==1.0) {
+                                                && mPreviousAttendanceModel.getPunchOutTimeS2() != null)||mPreviousAttendanceModel.getPresentDay()==1.0|| mPreviousAttendanceModel.isEditedByAdmin()) {
 
-                                            MakeGoodByeVisible();
+                                            MakeGoodByeVisible(mPreviousAttendanceModel.isEditedByAdmin());
                                         } else {
                                             if (mPreviousAttendanceModel.getPunchInTime() == null) {
                                                 MakePunchInVisible();
@@ -1497,12 +1498,17 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                 R.string.frag_attendance_punch_out_now));
     }
 
-    private void MakeGoodByeVisible() {
+    @SuppressLint("SetTextI18n")
+    private void MakeGoodByeVisible(boolean flag) {
 
         imgVAttendancePunchIn.setVisibility(View.GONE);
         imgVAttendancePunchOut.setVisibility(View.GONE);
         imgVAttendancePunchComplete
                 .setVisibility(View.VISIBLE);
+
+        if(flag)
+            tvAttendancePunchType.setText("Good Bye Attendance Given By Admin");
+        else
         tvAttendancePunchType.setText(getResources().getString(
                 R.string.frag_attendance_good_bye));
     }

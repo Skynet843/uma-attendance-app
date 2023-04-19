@@ -87,11 +87,13 @@ public class UserAttendanceHistoryInCalendarFragment extends Fragment implements
     public ArrayList<AttendanceModel> mTransactionList = new ArrayList<AttendanceModel>();
     public static int mNumEventsOnDay = 0;
     private CardView mCvNoOfDaysForPayment;
+    private LinearLayout mLlAdminNote;
     private TextView mTvFinalTotalDaysForPayment;
     private boolean mIsAdminUser=SharePreferences.getBool(SharePreferences.KEY_IS_ADMIN_USER,SharePreferences.DEFAULT_BOOLEAN);
     private BottomSheetBehavior mBottomSheetBehavior;
+    private CardView mCvFullBottomSheet;
     private TextView mTvBottomSheetViewCalendarSelectedDate, mTvBottomSheetViewPunchInTime, mTvBottomSheetViewPunchOutTime, mTvBottomSheetViewPunchInTimeS2, mTvBottomSheetViewPunchOutTimeS2,
-            mTvBottomSheetViewOverTime,mTvBottomSheetViewAttendanceType,mBtnBottomSheetViewImages;
+            mTvBottomSheetViewOverTime,mTvBottomSheetViewAttendanceType,mBtnBottomSheetViewImages,mTvBottomSheetViewAdminNote;
     private boolean mIsHolidayFetched=false;
     private boolean mIsAttendanceHistoryFetched=false;
     private Button mBtnBottomSheetViewAttendanceOnMap;
@@ -202,11 +204,14 @@ public class UserAttendanceHistoryInCalendarFragment extends Fragment implements
         mBottomSheetBehavior = BottomSheetBehavior.from(persistentbottomSheet);
         mTvBottomSheetViewCalendarSelectedDate = view.findViewById(R.id.tv_calendar_selected_date);
         mTvBottomSheetViewPunchInTime = view.findViewById(R.id.tv_punch_in_time);
+        mCvFullBottomSheet=view.findViewById(R.id.bottomSheetLayout);
         mTvBottomSheetViewPunchOutTime = view.findViewById(R.id.tv_punch_out_time);
         mTvBottomSheetViewPunchInTimeS2 = view.findViewById(R.id.tv_punch_in_time_s2);
         mTvBottomSheetViewPunchOutTimeS2 = view.findViewById(R.id.tv_punch_out_time_s2);
+        mTvBottomSheetViewAdminNote=view.findViewById(R.id.tv_admin_note);
         mTvBottomSheetViewOverTime = view.findViewById(R.id.tv_over_time);
         mTvBottomSheetViewAttendanceType = view.findViewById(R.id.tv_attendance_type);
+        mLlAdminNote=view.findViewById(R.id.ll_admin_note);
         mBtnBottomSheetViewAttendanceOnMap = view.findViewById(R.id.btn_view_in_map_bottom_sheet_view);
         Button btnBottomSheetViewEditAttendance = view.findViewById(R.id.btn_edit_attendance_bottom_sheet_view);
         Button btnBottomSheetViewClose = view.findViewById(R.id.btn_close_bottom_sheet_view);
@@ -551,6 +556,12 @@ public class UserAttendanceHistoryInCalendarFragment extends Fragment implements
                                         mTvBottomSheetViewPunchInTime.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getActivity()),R.color.colorPrimaryText));
                                     }
 
+                                    if(model.isEditedByAdmin()){
+                                        mLlAdminNote.setVisibility(View.VISIBLE);
+                                        mTvBottomSheetViewAdminNote.setText(model.getAdminNote());
+                                    }else {
+                                        mLlAdminNote.setVisibility(View.GONE);
+                                    }
                                     if (model.getPunchOutTime() != null) {
                                         mTvBottomSheetViewPunchOutTime.setText(model.getPunchOutTime());
                                         mTvBottomSheetViewPunchOutTime.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryText));
@@ -698,8 +709,13 @@ public class UserAttendanceHistoryInCalendarFragment extends Fragment implements
                                             TotalHalfDaySum = TotalHalfDaySum + detailModel.getPresentDay();
                                             detailModel.setType(AttendanceApplication.getAppContext().getString(R.string.label_half_days));
                                         } else if (detailModel.getPresentDay() == 0) {
-                                            NoOfDaysUserPresentButLeaveBefore++;
-                                            detailModel.setType(AttendanceApplication.getAppContext().getString(R.string.label_present_but_leave));
+                                            if(detailModel.isEditedByAdmin()){
+                                                detailModel.setType(AttendanceApplication.getAppContext().getString(R.string.label_absent_day));
+                                            }else {
+                                                NoOfDaysUserPresentButLeaveBefore++;
+                                                detailModel.setType(AttendanceApplication.getAppContext().getString(R.string.label_present_but_leave));
+                                            }
+
                                         }
                                     }
                                 }
@@ -954,7 +970,12 @@ public class UserAttendanceHistoryInCalendarFragment extends Fragment implements
         } else {
             for (int i = 1; i <= totalAttendedDays; i++) {
                 //Formated date dd MMM yyyy like 10 JAN 2019
-                String selectedDate = String.valueOf(i).concat(" ").concat(selectedMonthYear);
+                String selectedDate="";
+                if(i<9){
+                    selectedDate = ("0" + i).concat(" ").concat(selectedMonthYear);
+                }else {
+                    selectedDate = String.valueOf(i).concat(" ").concat(selectedMonthYear);
+                }
 
                 AttendanceModel attendanceModel = new AttendanceModel();
                 attendanceModel.setDate(selectedDate);

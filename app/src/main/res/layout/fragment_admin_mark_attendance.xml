@@ -121,161 +121,38 @@
                 android:layout_marginBottom="@dimen/dimen_ten"
                 android:background="@color/colorDivider" />
 
-            <LinearLayout
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/customTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_five"
+                android:text="Day Status" />
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_admin_day_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:paddingVertical="15dp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/dimen_ten"
+                android:layout_marginBottom="@dimen/dimen_ten"
+                android:background="@color/colorDivider" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/customTextView"
-                    android:layout_gravity="center_vertical"
-                    android:minWidth="150dp"
-                    android:text="@string/label_in_time"
-                    android:textColor="@color/colorAccent" />
 
-                <RelativeLayout
-                    android:id="@+id/rl_select_punch_in_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_select_punch_in_time"
-                        style="@style/customTextView"
-                        android:layout_centerVertical="true"
-                        android:hint="@string/label_in_time" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_alignParentRight="true"
-                        app:srcCompat="@drawable/ic_arrow_drop_down_24dp" />
-
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_punch_out_controls"
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/customTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_five"
+                android:text="Admin Side Note" />
+            <EditText
+                android:id="@+id/etAdminNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/dimen_ten"
-                    android:layout_marginBottom="@dimen/dimen_ten"
-                    android:background="@color/colorDivider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/customTextView"
-                        android:layout_gravity="center_vertical"
-                        android:minWidth="150dp"
-                        android:text="@string/label_out_time"
-                        android:textColor="@color/colorAccent" />
-
-                    <RelativeLayout
-                        android:id="@+id/rl_select_punch_out_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_select_punch_out_time"
-                            style="@style/customTextView"
-                            android:layout_centerVertical="true"
-                            android:hint="@string/label_out_time" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_alignParentRight="true"
-                            app:srcCompat="@drawable/ic_arrow_drop_down_24dp" />
-
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/dimen_ten"
-                    android:layout_marginBottom="@dimen/dimen_fifteen"
-                    android:background="@color/colorDivider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/customTextView"
-                        android:layout_alignParentLeft="true"
-                        android:minWidth="150dp"
-                        android:text="@string/label_total_working_hours"
-                        android:textColor="@color/colorAccent" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_total_hours"
-                        style="@style/customTextView"
-                        android:layout_alignParentRight="true" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/ll_day_selection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="@dimen/dimen_fifteen"
-                        android:layout_marginBottom="@dimen/dimen_ten"
-                        android:background="@color/colorDivider" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/customTextView"
-                            android:layout_alignParentLeft="true"
-                            android:minWidth="150dp"
-                            android:text="@string/label_day_count_as"
-                            android:textColor="@color/colorAccent" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_day_count_as"
-                            style="@style/customTextView"
-                            android:layout_alignParentRight="true"/>
-
-
-                        <belka.us.androidtoggleswitch.widgets.ToggleSwitch
-                            android:id="@+id/toggle_filter"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dimen_eight"
-                            android:textSize="12sp"
-                            android:visibility="gone"
-                            app:activeBgColor="@color/colorAccent"
-                            app:activeTextColor="@android:color/white"
-                            app:inactiveBgColor="@color/colorDivider"
-                            app:inactiveTextColor="@android:color/black"
-                            app:separatorColor="@android:color/white"
-                            app:textToggleCenter="@string/label_half_days"
-                            app:textToggleLeft="@string/label_absent_day"
-                            app:textToggleRight="@string/label_full_days"
-                            app:toggleWidth="100dp" />
-
-
-                    </RelativeLayout>
-                </LinearLayout>
-            </LinearLayout>
+                android:paddingVertical="10dp"
+                />
 
         </LinearLayout>
 

@@ -12,8 +12,11 @@
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/activity_admin_dashboard.xml" value="0.3625" />
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/dialog_change_password.xml" value="0.19635416666666666" />
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/dialog_generate_employee_sheet.xml" value="0.19635416666666666" />
+        <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/fragment_add_person.xml" value="0.3625" />
+        <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/fragment_admin_mark_attendance.xml" value="0.3625" />
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/fragment_employee_performance.xml" value="0.19635416666666666" />
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/fragment_user_attendance_history_in_calendar.xml" value="0.3625" />
+        <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/layout/layout_material_day.xml" value="0.3625" />
         <entry key="..\:/Attendance App Data/uma-attendance-app/app/src/main/res/menu/menu_branches.xml" value="0.3625" />
         <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_display_employee_tracking_location_on_map.xml" value="0.32135416666666666" />
         <entry key="..\:/Users/souvi/OneDrive/Desktop/Attendance App Data/GeofenceBasedAttendanceUserTimeSlotWise/app/src/main/res/layout/activity_on_boarding.xml" value="0.2291577597263788" />

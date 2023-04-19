@@ -58,8 +58,11 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.RectangleReadOnly;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -1056,7 +1059,8 @@ public class CommonMethods {
                 });
 
                 //create document file
-                Document doc = new Document();
+                Rectangle r=new RectangleReadOnly(800,842);
+                Document doc = new Document(r);
                 try {
                     // CSV generation
                     File file = new File(CommonMethods.getApplicationDirectory(
@@ -1083,10 +1087,10 @@ public class CommonMethods {
                     doc.add(preface);
 
                     try {
-                        PdfPTable table = new PdfPTable(7);
+                        PdfPTable table = new PdfPTable(8);
                         // 100.0f mean width of table is same as Document size
                         table.setWidthPercentage(100.0f);
-                        float[] columnWidth = new float[]{16, 8, 24, 10, 11,12, 19};
+                        float[] columnWidth = new float[]{13, 5, 21, 7, 8,9, 16,21};
                         table.setWidths(columnWidth);
 
                         PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("DATE", smallBold)));
@@ -1123,6 +1127,12 @@ public class CommonMethods {
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
                         table.addCell(cell);
+
+                        cell = new PdfPCell(new Paragraph(new Chunk("Admin\nNote", smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
                         table.setHeaderRows(1);
 
 
@@ -1136,7 +1146,63 @@ public class CommonMethods {
                             Log.d("SOUVIK", "createPDF: GOD");
                             model = mTransactionList.get(i);
 
-                            if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
+                            if(model.isEditedByAdmin()){
+                                cell = new PdfPCell(new Phrase(model.getDate()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                if(model.getPresentDay()==0){
+                                    cell = new PdfPCell(new Phrase(String.valueOf(0)));
+                                }else if(model.getPresentDay()==0.5){
+                                    cell = new PdfPCell(new Phrase(String.valueOf(0.5)));
+                                    TotalHalfDayDay+=0.5;
+                                }else {
+                                    cell = new PdfPCell(new Phrase(String.valueOf(1)));
+                                    TotalPresentDay++;
+                                }
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                String type=activity.getString(R.string.label_absent_day);
+                                if(model.getPresentDay()==0){
+                                    type=activity.getString(R.string.label_absent_day);
+                                }else if(model.getPresentDay()==0.5){
+                                    type=activity.getString(R.string.label_half_days);
+                                }else {
+                                    type=activity.getString(R.string.label_full_days);
+                                }
+                                cell = new PdfPCell(new Phrase(type));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase(model.getAdminNote()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+                            } else if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
                                     || model.getType().equalsIgnoreCase(activity.getString(R.string.label_non_working_day))
                                     || model.getType().equalsIgnoreCase(activity.getString(R.string.label_absent_day))) {
 
@@ -1175,6 +1241,11 @@ public class CommonMethods {
 
 
                                 cell = new PdfPCell(new Phrase(model.getType()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("-"));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
@@ -1297,6 +1368,10 @@ public class CommonMethods {
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
+                                cell = new PdfPCell(new Phrase("-"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
                             }
                         }
 
@@ -1352,7 +1427,11 @@ public class CommonMethods {
                         cell.setPadding(5f);
                         table.addCell(cell);
                         doc.add(table);
-
+                        cell = new PdfPCell(new Paragraph(""));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+                        doc.add(table);
 
                         addEmptyLine(new Paragraph(), 2);
                         doc.add(preface);
@@ -1490,7 +1569,8 @@ public class CommonMethods {
                 });
 
                 //create document file
-                Document doc = new Document();
+                Rectangle r=new RectangleReadOnly(800,842);
+                Document doc = new Document(r);
                 try {
                     // CSV generation
                     File file = new File(CommonMethods.getApplicationDirectory(
@@ -1517,10 +1597,10 @@ public class CommonMethods {
                     doc.add(preface);
 
                     try {
-                        PdfPTable table = new PdfPTable(6);
+                        PdfPTable table = new PdfPTable(8);
                         // 100.0f mean width of table is same as Document size
                         table.setWidthPercentage(100.0f);
-                        float[] columnWidth = new float[]{18, 8, 26, 12, 13, 23};
+                        float[] columnWidth = new float[]{13, 5, 21, 7, 8,9, 16,21};
                         table.setWidths(columnWidth);
 
                         PdfPCell cell = new PdfPCell(new Paragraph(new Chunk("DATE", smallBold)));
@@ -1548,7 +1628,17 @@ public class CommonMethods {
                         cell.setPadding(5f);
                         table.addCell(cell);
 
+                        cell = new PdfPCell(new Paragraph(new Chunk("LESS\nTIME", smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
                         cell = new PdfPCell(new Paragraph(new Chunk("TYPE", smallBold)));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell.setPadding(5f);
+                        table.addCell(cell);
+
+                        cell = new PdfPCell(new Paragraph(new Chunk("Admin\nNote", smallBold)));
                         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cell.setPadding(5f);
                         table.addCell(cell);
@@ -1563,7 +1653,63 @@ public class CommonMethods {
                         for (int i = 0; i < length; i++) {
                             model = mTransactionList.get(i);
 
-                            if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
+                            if(model.isEditedByAdmin()){
+                                cell = new PdfPCell(new Phrase(model.getDate()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                if(model.getPresentDay()==0){
+                                    cell = new PdfPCell(new Phrase(String.valueOf(0)));
+                                }else if(model.getPresentDay()==0.5){
+                                    cell = new PdfPCell(new Phrase(String.valueOf(0.5)));
+                                    TotalHalfDayDay+=0.5;
+                                }else {
+                                    cell = new PdfPCell(new Phrase(String.valueOf(1)));
+                                    TotalPresentDay++;
+                                }
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("Admin"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                String type=activity.getString(R.string.label_absent_day);
+                                if(model.getPresentDay()==0){
+                                    type=activity.getString(R.string.label_absent_day);
+                                }else if(model.getPresentDay()==0.5){
+                                    type=activity.getString(R.string.label_half_days);
+                                }else {
+                                    type=activity.getString(R.string.label_full_days);
+                                }
+                                cell = new PdfPCell(new Phrase(type));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase(model.getAdminNote()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+                            }else if (model.getType().equalsIgnoreCase(activity.getString(R.string.label_public_holiday))
                                     || model.getType().equalsIgnoreCase(activity.getString(R.string.label_non_working_day))
                                     || model.getType().equalsIgnoreCase(activity.getString(R.string.label_absent_day))) {
 
@@ -1596,7 +1742,17 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
+                                cell = new PdfPCell(new Phrase("-"));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
                                 cell = new PdfPCell(new Phrase(model.getType()));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("-"));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
@@ -1635,7 +1791,7 @@ public class CommonMethods {
                                     type = activity.getString(R.string.label_present_but_leave);
                                 } else if (model.getPresentDay() == 0.5) {
                                     type = activity.getString(R.string.label_half_days);
-                                    TotalHalfDayDay = TotalHalfDayDay = 0.5;
+                                    TotalHalfDayDay += 0.5;
                                 }
 
 
@@ -1654,10 +1810,12 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
+                                int totalWorkMinuteLocal=0;
                                 if (model.getTotalWorkingHours() != null) {
                                     String[] split = model.getTotalWorkingHours().split(":");
                                     Integer hours = Integer.valueOf(split[0]);
                                     Integer minuts = Integer.valueOf(split[1]);
+                                    totalWorkMinuteLocal=((hours * 60) + minuts);
                                     TotalMinutes = TotalMinutes + ((hours * 60) + minuts);
                                 }
 
@@ -1676,7 +1834,45 @@ public class CommonMethods {
                                 cell.setPadding(5f);
                                 table.addCell(cell);
 
+                                // Extract Date
+
+                                Date d1=new Date(model.getPunchDateInMillis());
+                                int dayNo=d1.getDay();
+                                dayNo=dayNo-2<0?6:dayNo-2;
+                                int fullDayWork=0;
+                                if(mPersonModel.getTimeSlotList().get(dayNo)!=null){
+                                    String fs=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDay();
+                                    String ss=mPersonModel.getTimeSlotList().get(dayNo).getHoursForFullDayS2();
+                                    String[] split=fs.split(":");
+                                    if(split.length>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+
+                                    split=ss.split(":");
+                                    if(ss.length()>=2){
+                                        Integer hour=Integer.valueOf(split[0]);
+                                        Integer minute=Integer.valueOf(split[1]);
+                                        fullDayWork+=((hour * 60) + minute);
+                                    }
+                                }
+                                int lessTime=Math.max(fullDayWork-totalWorkMinuteLocal,0);
+                                if (lessTime == 0) {
+                                    cell = new PdfPCell(new Phrase("-"));
+                                } else {
+                                    cell = new PdfPCell(new Phrase(get24HoursFromMinutes(lessTime)));
+                                }
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
                                 cell = new PdfPCell(new Phrase(type));
+                                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell.setPadding(5f);
+                                table.addCell(cell);
+
+                                cell = new PdfPCell(new Phrase("-"));
                                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                                 cell.setPadding(5f);
                                 table.addCell(cell);
@@ -2651,6 +2847,12 @@ public class CommonMethods {
         try {
             ArrayList<File> listOfFilePath=new ArrayList<>();
             for(ArrayList<AttendanceModel> list:listForAttendance){
+                Collections.sort(list, new Comparator<AttendanceModel>() {
+                    @Override
+                    public int compare(AttendanceModel o1, AttendanceModel o2) {
+                        return o1.getDay()-o2.getDay();
+                    }
+                });
                 String name=list.get(0).getPersonName();
                 File file = new File(context.getExternalFilesDir("CSVArea")+"/"+name+"_Data_"+mo+".csv");
                 listOfFilePath.add(file);
@@ -2660,16 +2862,21 @@ public class CommonMethods {
                 // adding header to csv
                 String[] header1 = { "", name, "" };
                 writer.writeNext(header1);
-                String[] header = { "Day of Month", "Total Work Hour", "Present Day","Over Time" };
+                String[] header = { "Day of Month", "Total Work Hour", "Present Day","Over Time" ,"Admin Note"};
                 writer.writeNext(header);
                 // add data to csv
                 for( AttendanceModel model:list){
 
-                    String[] data=new String[4];
+                    String[] data=new String[5];
                     data[0]=model.getPunchDate()+"";
                     data[1]=model.getTotalWorkingHours()+"";
                     data[2]=model.getPresentDay()+"";
                     data[3]=get24HoursFromMinutes((int) model.getOverTimeInMinutes());
+                    if(model.isEditedByAdmin()){
+                        data[4]=model.getAdminNote();
+                    }else {
+                        data[4]="";
+                    }
                     writer.writeNext(data);
                 }
                 writer.close();
