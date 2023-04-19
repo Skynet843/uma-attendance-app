@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,10 +16,14 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -60,21 +65,18 @@ import in.umaenterprise.attendancemanagement.model.ShopTimingModel;
 import in.umaenterprise.attendancemanagement.utils.CommonMethods;
 import in.umaenterprise.attendancemanagement.utils.ConstantData;
 
-public class AdminMarkAttendanceFragment extends Fragment implements View.OnClickListener {
-
+public class AdminMarkAttendanceFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+    private double presentDay;
     private TextView mTvDate;
-    private TextView mTvSelectPunchInTime, mTvSelectPunchOutTime, mTvTotalHours,mTvDayCountAs;
-    private ToggleSwitch mToggleSwitch;
     private String mSelectedDate;
     private String mSelectedMonthYear;
     private SimpleDateFormat actualTimeFormat = new SimpleDateFormat("HH:mm", Locale.US);
     private SimpleDateFormat requiredTimeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
-    private LinearLayout mLlPunchOutControls;
     private AttendanceModel mPreviousAttendanceModel = null;
     private PersonModel mPersonModel;
+    private Spinner day_status;
     private String mPreviousSelectedDate="";
-    private double mOverTimeInMinutes=0;
-    private boolean isShift2=false;
+    private EditText mEtAdminNote;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -163,39 +165,14 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
             mPersonModel = (PersonModel) getArguments().getSerializable("PersonModel");
             mPreviousSelectedDate =  getArguments().getString("SelectedDate");
         }
-
+        mEtAdminNote=view.findViewById(R.id.etAdminNote);
+        RelativeLayout rlSelectDate = view.findViewById(R.id.rl_select_date);
         TextView tvPersonName = view.findViewById(R.id.tv_person_name);
         TextView tvPersonMobilNo = view.findViewById(R.id.tv_person_mobile_no);
-        RelativeLayout rlSelectDate = view.findViewById(R.id.rl_select_date);
         mTvDate = view.findViewById(R.id.tv_date);
-        RelativeLayout rlSelectPunchInTime = view.findViewById(R.id.rl_select_punch_in_time);
-        mTvSelectPunchInTime = view.findViewById(R.id.tv_select_punch_in_time);
-
-        mLlPunchOutControls = view.findViewById(R.id.ll_punch_out_controls);
-        RelativeLayout rlSelectPunchOutTime = view.findViewById(R.id.rl_select_punch_out_time);
-        mTvSelectPunchOutTime = view.findViewById(R.id.tv_select_punch_out_time);
-        mTvTotalHours = view.findViewById(R.id.tv_total_hours);
-        LinearLayout mLlDaySelection = view.findViewById(R.id.ll_day_selection);
-        mToggleSwitch = view.findViewById(R.id.toggle_filter);
-        mTvDayCountAs = view.findViewById(R.id.tv_day_count_as);
-
-
-        rlSelectPunchInTime.setOnClickListener(this);
-        rlSelectPunchOutTime.setOnClickListener(this);
-
         if(mPersonModel!=null) {
             tvPersonName.setText(mPersonModel.getName());
             tvPersonMobilNo.setText(mPersonModel.getMobileNo());
-
-            /**
-             * Here we hide Day/Attendance selection portion
-             * when WORK TYPE is HOURS
-             */
-            if (mPersonModel.getWorkType().equalsIgnoreCase(ConstantData.WORK_TYPE_HOUR_WISE)) {
-                mLlDaySelection.setVisibility(View.GONE);
-            } else {
-                mLlDaySelection.setVisibility(View.VISIBLE);
-            }
         }
 
         if (mPreviousSelectedDate != null) {
@@ -222,240 +199,33 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
             if (previousSelectedDate != null) {
                 mSelectedMonthYear = monthYear.format(previousSelectedDate);
             }
-        } else {
-            String currentDate = new SimpleDateFormat(ConstantData.DATE_FORMAT, Locale.US).format(Calendar.getInstance().getTime());
-            String monthYear = new SimpleDateFormat(ConstantData.MONTH_YEAR_FORMAT, Locale.US).format(Calendar.getInstance().getTime());
-            mTvDate.setText(currentDate);
-            mSelectedDate = currentDate;
-            mSelectedMonthYear = monthYear;
-            rlSelectDate.setOnClickListener(this);
         }
 
-        mToggleSwitch.setOnToggleSwitchChangeListener(new ToggleSwitch.OnToggleSwitchChangeListener(){
-
-            @Override
-            public void onToggleSwitchChangeListener(int position, boolean isChecked) {
-                switch (position){
-                    case 0:
-                        mTvDayCountAs.setText(getString(R.string.label_absent_day));
-                        break;
-                    case 1:
-                        mTvDayCountAs.setText(getString(R.string.label_half_days));
-                        break;
-                    case 2:
-                        mTvDayCountAs.setText(getString(R.string.label_full_days));
-                        break;
-                }
-            }
-        });
-
+        // Setup Spinner
+        day_status=view.findViewById(R.id.spinner_admin_day_status);
+        ArrayAdapter<CharSequence> areaAdapter=ArrayAdapter.createFromResource(view.getContext(),R.array.day_type, android.R.layout.simple_spinner_item);
+        areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        day_status.setAdapter(areaAdapter);
+        day_status.setOnItemSelectedListener(this);
+        day_status.setEnabled(false);
         getAttendanceData();
-        //getLastWeekAttendanceData();
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_submit, menu);
-        menu.findItem(R.id.item_info).setVisible(false);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.item_submit) {
-            validateAndMarkAttendance();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
-            case R.id.rl_select_date:
-                final Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dpd = new DatePickerDialog(Objects.requireNonNull(getActivity()), new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.YEAR, year);
-                        c.set(Calendar.MONTH, month);
-                        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                        String selectedDate_ = new SimpleDateFormat(ConstantData.DATE_FORMAT, Locale.US).format(c.getTime());
-                        String selectedMonthYear_ = new SimpleDateFormat(ConstantData.MONTH_YEAR_FORMAT, Locale.US).format(c.getTime());
-                        mTvDate.setText(selectedDate_);
-                        mSelectedDate = selectedDate_;
-                        mSelectedMonthYear = selectedMonthYear_;
-
-                        getAttendanceData();
-                    }
-                }, year, month, day);
-                dpd.show();
-
-                break;
-            case R.id.rl_select_punch_in_time:
-                Calendar mcurrentInTime = Calendar.getInstance();
-                int hour = mcurrentInTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentInTime.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-
-                        Date punchInTime = null;
-                        try {
-                            punchInTime = actualTimeFormat.parse(selectedHour + ":" + selectedMinute);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (punchInTime != null) {
-
-                            if (mTvSelectPunchOutTime.getText().toString().trim().length() > 0) {
-                                Date selectedPunchOutTimeDate=null;
-                                try {
-                                    selectedPunchOutTimeDate=requiredTimeFormat.parse(mTvSelectPunchOutTime.getText().toString().trim());
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                if(punchInTime.compareTo(selectedPunchOutTimeDate)<0) {
-                                    mTvSelectPunchInTime.setText(requiredTimeFormat.format(punchInTime));
-
-                                    int totalWorkingMinutes = CommonMethods.calculateTotalHours(mTvSelectPunchInTime.getText().toString().trim(),
-                                            mTvSelectPunchOutTime.getText().toString().trim());
-                                    String totalWorkingHours=CommonMethods.get24HoursFromMinutes(totalWorkingMinutes);
-                                    mTvTotalHours.setText(totalWorkingHours.concat(" ").concat(getString(R.string.label_hours)));
-
-                                    calculateAttendanceType();
-
-                                }else{
-                                    CommonMethods.showAlertDailogueWithOK(getActivity(),getString(R.string.title_alert),
-                                            getString(R.string.msg_punch_in_time_always_smaller_then_punch_out_time),getString(R.string.action_ok));
-                                }
-                            }else {
-                                mTvSelectPunchInTime.setText(requiredTimeFormat.format(punchInTime));
-                            }
-                        } else {
-                            Toast.makeText(getActivity(), getString(R.string.msg_time_parsing_issue), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                }, hour, minute, false);//Yes 24 hour time
-                mTimePicker.show();
-                break;
-            case R.id.rl_select_punch_out_time:
-                if (mTvSelectPunchInTime.getText().toString().trim().length() > 0) {
-                    Calendar mcurrentOutTime = Calendar.getInstance();
-                    int hour_ = mcurrentOutTime.get(Calendar.HOUR_OF_DAY);
-                    int minute_ = mcurrentOutTime.get(Calendar.MINUTE);
-                    TimePickerDialog mTimePicker_;
-                    mTimePicker_ = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                            Date selectedPunchOutTimeDate = null;
-                            try {
-                                selectedPunchOutTimeDate = actualTimeFormat.parse(String.valueOf(selectedHour).concat(":").concat(String.valueOf(selectedMinute)));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            if (selectedPunchOutTimeDate != null) {
-
-                                Date selectedPunchInTimeDate=null;
-                                try {
-                                    selectedPunchInTimeDate=requiredTimeFormat.parse(mTvSelectPunchInTime.getText().toString().trim());
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                if(selectedPunchOutTimeDate.compareTo(selectedPunchInTimeDate)>0) {
-                                    mTvSelectPunchOutTime.setText(requiredTimeFormat.format(selectedPunchOutTimeDate));
-                                    int totalWorkingMinutes = CommonMethods.calculateTotalHours(mTvSelectPunchInTime.getText().toString().trim(),
-                                            mTvSelectPunchOutTime.getText().toString().trim());
-                                    String totalWorkingHours=CommonMethods.get24HoursFromMinutes(totalWorkingMinutes);
-                                    mTvTotalHours.setText(totalWorkingHours.concat(" ").concat(getString(R.string.label_hours)));
-
-                                    calculateAttendanceType();
-                                }else{
-                                    CommonMethods.showAlertDailogueWithOK(getActivity(),getString(R.string.title_alert),
-                                            getString(R.string.msg_punch_out_time_always_greater_then_punch_in_time),getString(R.string.action_ok));
-                                }
-                            } else {
-                                Toast.makeText(getActivity(), getString(R.string.msg_time_parsing_issue), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }, hour_, minute_, false);//Yes 24 hour time
-                    mTimePicker_.show();
-                } else {
-                    Toast.makeText(getActivity(), getString(R.string.msg_select_punch_in_time_first), Toast.LENGTH_SHORT).show();
-                }
-                break;
             default:
                 break;
         }
     }
 
-    private void calculateAttendanceType() {
-        mOverTimeInMinutes=0;
-        if(mPersonModel.getWorkType().equalsIgnoreCase(ConstantData.WORK_TYPE_HOUR_WISE)){
-            mToggleSwitch.setCheckedTogglePosition(2);
-        }else{
-            ArrayList<ShopTimingModel> mTimeSlotArrayList = mPersonModel.getTimeSlotList();
-            if (mTimeSlotArrayList.size() > 0) {
-                //Here we convert punch date into DATE format
-                Date punchDate = null;
-                try {
-                    punchDate = new SimpleDateFormat(ConstantData.DATE_FORMAT, Locale.US).parse(mSelectedDate);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                /**
-                 * Here we convert punch date into day name 'MONDAY','SUNDAY' format
-                 */
-                SimpleDateFormat outFormat = new SimpleDateFormat("EEEE", Locale.US);
-                assert punchDate != null;
-                String currentDayName = outFormat.format(punchDate).toUpperCase();
-                /**
-                 * Here we EXTRACT time slot model for particular current date/punch date
-                 */
-                ShopTimingModel timeModel = null;
-                for (ShopTimingModel model :
-                        mTimeSlotArrayList) {
-                    assert model != null;
-                    if (model.getDay().equalsIgnoreCase(currentDayName)) {
-                        timeModel = model;
-                        break;
-                    }
-                }
-                if (timeModel != null) {
-
-                    double[] calculatedDay = CommonMethods.getDayTypeForMonthWise(timeModel,mTvSelectPunchInTime.getText().toString().trim(),
-                            mTvSelectPunchOutTime.getText().toString().trim(),isShift2,0);
-                    if (calculatedDay[0] == 1) {
-                        mToggleSwitch.setCheckedTogglePosition(2);
-                        mOverTimeInMinutes=calculatedDay[1];
-                    } else if (calculatedDay[0] == 0.5) {
-                        mToggleSwitch.setCheckedTogglePosition(1);
-                    } else if (calculatedDay[0] == 0) {
-                        mToggleSwitch.setCheckedTogglePosition(0);
-                    }
-                }
-            }
-        }
-    }
 
 
     private void getAttendanceData() {
         mPreviousAttendanceModel = null;
-        mTvSelectPunchInTime.setHint("In Time");
-        mTvSelectPunchInTime.setText("");
-        showOrHidePunchOutControls(false);
         if (!mSelectedDate.isEmpty()) {
 
             /**
@@ -470,45 +240,40 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             CommonMethods.cancelProgressDialog();
                             if (dataSnapshot.exists()) {
-
                                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                     mPreviousAttendanceModel = ds.getValue(AttendanceModel.class);
                                     assert mPreviousAttendanceModel != null;
                                     mPreviousAttendanceModel.setFirebaseKey(ds.getKey());
-
-                                    if (mPreviousAttendanceModel.getPunchInTime() != null
-                                            && mPreviousAttendanceModel.getPunchOutTime() != null) {
-                                        showOrHidePunchOutControls(true);
-
-                                        mTvSelectPunchInTime.setText(mPreviousAttendanceModel.getPunchInTime());
-                                        mTvSelectPunchOutTime.setText(mPreviousAttendanceModel.getPunchOutTime());
-
-                                        int totalWorkingMinutes = CommonMethods.calculateTotalHours(mPreviousAttendanceModel.getPunchInTime(),
-                                                mPreviousAttendanceModel.getPunchOutTime());
-                                        String totalWorkingHours=CommonMethods.get24HoursFromMinutes(totalWorkingMinutes);
-                                        mTvTotalHours.setText(totalWorkingHours.concat(" ").concat(getString(R.string.label_hours)));
-
-                                        if (mPreviousAttendanceModel.getPresentDay() == 1) {
-                                            mToggleSwitch.setCheckedTogglePosition(2);
-                                        } else if (mPreviousAttendanceModel.getPresentDay() == 0.5) {
-                                            mToggleSwitch.setCheckedTogglePosition(1);
-                                        } else if (mPreviousAttendanceModel.getPresentDay() == 0) {
-                                            mToggleSwitch.setCheckedTogglePosition(0);
-                                        } else {
-                                            mToggleSwitch.setCheckedTogglePosition(0);
-                                        }
-                                    } else if (mPreviousAttendanceModel.getPunchInTime() != null) {
-                                        showOrHidePunchOutControls(true);
-                                        mTvSelectPunchInTime.setText(mPreviousAttendanceModel.getPunchInTime());
-                                    } else {
-                                        showOrHidePunchOutControls(false);
-                                    }
-                                    break;
+                                    mPreviousAttendanceModel.setEditedByAdmin(true);
+                                    int val=Math.max(0,(int)(mPreviousAttendanceModel.getPresentDay()*2));
+                                    day_status.setSelection(val);
+                                    day_status.setEnabled(true);
+                                    mPreviousAttendanceModel.setPunchInBy("Admin");
+                                    mEtAdminNote.setText(mPreviousAttendanceModel.getAdminNote());
                                 }
                             }else{
-                                //Means admin wants to add attendance for fully absent day
-                                showOrHidePunchOutControls(true);
-                                mToggleSwitch.setCheckedTogglePosition(0);
+                                Date selectedDate = null;
+                                try {
+                                    selectedDate = new SimpleDateFormat(ConstantData.DATE_FORMAT, Locale.US).parse(mSelectedDate);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                mPreviousAttendanceModel = new AttendanceModel();
+                                mPreviousAttendanceModel.setPersonName(mPersonModel.getName());
+                                mPreviousAttendanceModel.setPersonMobileNo(mPersonModel.getMobileNo());
+                                mPreviousAttendanceModel.setPersonFirebaseKey(mPersonModel.getFirebaseKey());
+                                mPreviousAttendanceModel.setPunchDate(mSelectedDate);
+                                if (selectedDate != null) {
+                                    mPreviousAttendanceModel.setPunchDateInMillis(selectedDate.getTime());
+                                }
+                                mPreviousAttendanceModel.setOverTimeInMinutes(0);
+                                mPreviousAttendanceModel.setPresentDay(0);
+                                mPreviousAttendanceModel.setPunchInLocationCode("Mark From AnyWhere");
+                                mPreviousAttendanceModel.setPunchInBy("Admin");
+                                mPreviousAttendanceModel.setEditedByAdmin(true);
+                                day_status.setSelection(0);
+                                day_status.setEnabled(true);
+
                             }
                         }
                         @Override
@@ -521,74 +286,23 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_submit, menu);
+        menu.findItem(R.id.item_info).setVisible(false);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-    /**
-     * User to validate details and mark attendance
-     */
-    private void validateAndMarkAttendance() {
-        String strSelectedDate = mTvDate.getText().toString().trim();
-        String strSelectedPunchInTime = mTvSelectPunchInTime.getText().toString().trim();
-        String strSelectedPunchOutTime = mTvSelectPunchOutTime.getText().toString().trim();
-
-        if (strSelectedDate.isEmpty() || strSelectedPunchInTime.isEmpty()
-                || strSelectedPunchOutTime.isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.msg_all_fields_required), Toast.LENGTH_SHORT).show();
-        } else {
-            Date selectedDate = null;
-            try {
-                selectedDate = new SimpleDateFormat(ConstantData.DATE_FORMAT, Locale.US).parse(strSelectedDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            AttendanceModel attendanceModel = new AttendanceModel();
-            attendanceModel.setPersonName(mPersonModel.getName());
-            attendanceModel.setPersonMobileNo(mPersonModel.getMobileNo());
-            attendanceModel.setPersonFirebaseKey(mPersonModel.getFirebaseKey());
-            attendanceModel.setPunchDate(strSelectedDate);
-            if (selectedDate != null) {
-                attendanceModel.setPunchDateInMillis(selectedDate.getTime());
-            }
-            attendanceModel.setPunchInTime(strSelectedPunchInTime);
-            attendanceModel.setPunchOutTime(strSelectedPunchOutTime);
-            attendanceModel.setOverTimeInMinutes(mOverTimeInMinutes);
-            if (mPreviousAttendanceModel != null) {
-                if (mPreviousAttendanceModel.getPunchInLatitude() != 0
-                        && mPreviousAttendanceModel.getPunchInLongitude() != 0) {
-                    attendanceModel.setPunchInLatitude(mPreviousAttendanceModel.getPunchInLatitude());
-                    attendanceModel.setPunchInLongitude(mPreviousAttendanceModel.getPunchInLongitude());
-                }
-
-                if (mPreviousAttendanceModel.getPunchOutLatitude() != 0
-                        && mPreviousAttendanceModel.getPunchOutLongitude() != 0) {
-                    attendanceModel.setPunchOutLatitude(mPreviousAttendanceModel.getPunchOutLatitude());
-                    attendanceModel.setPunchOutLongitude(mPreviousAttendanceModel.getPunchOutLongitude());
-                }
-            }
-
-            switch (mToggleSwitch.getCheckedTogglePosition()) {
-                case 0:
-                    attendanceModel.setPresentDay(0);
-                    break;
-                case 1:
-                    attendanceModel.setPresentDay(0.5);
-                    break;
-                case 2:
-                    attendanceModel.setPresentDay(1);
-                    break;
-                default:
-                    break;
-            }
-
-            int totalWorkingMinutes = CommonMethods.calculateTotalHours(strSelectedPunchInTime,
-                    strSelectedPunchOutTime);
-            String totalWorkingHours=CommonMethods.get24HoursFromMinutes(totalWorkingMinutes);
-            attendanceModel.setTotalWorkingHours(totalWorkingHours);
-            attendanceModel.setPunchInBy("ADMIN");
-            attendanceModel.setPunchOutBy("ADMIN");
-
-            uploadAttendanceDetails(attendanceModel);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.item_submit) {
+            mPreviousAttendanceModel.setPresentDay(presentDay);
+            mPreviousAttendanceModel.setType(type);
+            mPreviousAttendanceModel.setAdminNote(mEtAdminNote.getText().toString());
+            uploadAttendanceDetails(mPreviousAttendanceModel);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void uploadAttendanceDetails(final AttendanceModel attendanceModel) {
@@ -616,7 +330,7 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
                             CommonMethods.showProgressDialog(getActivity());
 
                             Query query = null;
-                            if (mPreviousAttendanceModel == null) {
+                            if (mPreviousAttendanceModel.getFirebaseKey() == null) {
                                 String attendanceKey = AttendanceApplication.refCompanyUserAttendanceDetails
                                         .child(mPersonModel.getFirebaseKey())
                                         .child(mSelectedMonthYear).push().getKey();
@@ -687,17 +401,27 @@ public class AdminMarkAttendanceFragment extends Fragment implements View.OnClic
         alertDialog.show();
     }
 
-
-    private void showOrHidePunchOutControls(boolean show) {
-        mTvSelectPunchOutTime.setHint("Out Time");
-        mTvSelectPunchOutTime.setText("");
-        mTvTotalHours.setText("");
-        mToggleSwitch.setCheckedTogglePosition(0);
-        if (show) {
-            mLlPunchOutControls.setVisibility(View.VISIBLE);
-        } else {
-            mLlPunchOutControls.setVisibility(View.GONE);
+    String type="Absent Day";
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (position){
+            case 0:
+                presentDay=0;
+                type="Absent Day";
+                break;
+            case 1:
+                presentDay=0.5;
+                type="Half Day";
+                break;
+            case 2:
+                presentDay=1;
+                type="Present Day";
+                break;
         }
     }
 
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

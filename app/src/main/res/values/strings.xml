@@ -10,6 +10,12 @@
         <item>Ranihati Uma Motors</item>
         <item>Gangadhar Pur Counter</item>
         <item>Warehouse</item>
+        <item>Amta New Branch</item>
+    </string-array>
+    <string-array name="day_type">
+        <item>Absent</item>
+        <item>Present- Half Day</item>
+        <item>Present- Full Day</item>
     </string-array>
     <string name="app_name">UMA Attendance Management</string>
 
@@ -392,6 +398,7 @@
     <string name="label_in">1st Shift IN</string>
 
     <string name="label_outS2">2nd Shift OUT</string>
+    <string name="admin_note_text">Admin Note</string>
     <string name="label_inS2">2nd Shift IN</string>
     <string name="btn_close">Close</string>
     <string name="menu_records_in_list">Show Attendance In List Format</string>

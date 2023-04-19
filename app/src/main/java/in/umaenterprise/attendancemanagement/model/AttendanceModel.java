@@ -44,11 +44,33 @@ public class AttendanceModel implements Serializable {
     private String punchInImageS2;
     private String punchOutImageS2;
 
+    // Added By Souvik Samanta
+    private String adminNote;
+    private boolean editedByAdmin;
+
+    public String getAdminNote() {
+        return adminNote;
+    }
+
+    public void setAdminNote(String adminNote) {
+        this.adminNote = adminNote;
+    }
+
+    public boolean isEditedByAdmin() {
+        return editedByAdmin;
+    }
+
+    public void setEditedByAdmin(boolean editedByAdmin) {
+        this.editedByAdmin = editedByAdmin;
+    }
+
     public AttendanceModel(){
         punchInImage="";
         punchOutImage="";
         punchInImageS2="";
         punchOutImageS2="";
+        editedByAdmin=false;
+        adminNote="";
     }
 
     public double getOverTimeInMinutesS2() {
