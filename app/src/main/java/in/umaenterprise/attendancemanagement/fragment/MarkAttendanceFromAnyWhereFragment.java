@@ -484,7 +484,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                                                 && mPreviousAttendanceModel.getPunchOutTime() != null && mPreviousAttendanceModel.getPunchInTimeS2() != null
                                                 && mPreviousAttendanceModel.getPunchOutTimeS2() != null)||mPreviousAttendanceModel.getPresentDay()==1.0|| mPreviousAttendanceModel.isEditedByAdmin()) {
 
-                                            MakeGoodByeVisible(mPreviousAttendanceModel.isEditedByAdmin());
+                                            MakeGoodByeVisible(mPreviousAttendanceModel.isEditedByAdmin()?0:-1);
                                         } else {
                                             if (mPreviousAttendanceModel.getPunchInTime() == null) {
                                                 MakePunchInVisible();
@@ -521,7 +521,34 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                                     tvAttendancePunchOutTime.setText(PunchOutTime);
                                     tvAttendancePunchInTimeS2.setText(PunchInTimeS2);
                                     tvAttendancePunchOutTimeS2.setText(PunchOutTimeS2);
-                                    MakePunchInVisible();
+                                    if (mTimeSlotArrayList.size() > 0) {
+                                        /**
+                                         * Here we convert current date/punch date into day name 'MONDAY','SUNDAY' format
+                                         */
+                                        SimpleDateFormat outFormat = new SimpleDateFormat("EEEE", Locale.US);
+                                        String currentDayName = outFormat.format(new Date()).toUpperCase();
+                                        /**
+                                         * Here we EXTRACT time slot model for particular current date/punch date
+                                         */
+                                        ShopTimingModel timeModel = null;
+                                        for (ShopTimingModel model :
+                                                mTimeSlotArrayList) {
+                                            assert model != null;
+                                            if (model.getDay().equalsIgnoreCase(currentDayName)) {
+                                                timeModel = model;
+                                                break;
+                                            }
+                                        }
+                                        assert timeModel != null;
+                                        int totalTime=CommonMethods.calculateTotalHours(timeModel.getFromTime(),tvAttendanceCurrentTime.getText().toString());
+                                        Log.d(TAG, "onDataChange: "+totalTime+"    "+timeModel.getFromTime()+"   "+tvAttendanceCurrentTime.getText().toString());
+                                        if(totalTime>10){
+                                            MakeGoodByeVisible(1);
+                                        }
+                                    }else {
+                                        MakePunchInVisible();
+                                    }
+
                                 }
                                 getLocationOfUser();
                             }
@@ -1499,15 +1526,17 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
     }
 
     @SuppressLint("SetTextI18n")
-    private void MakeGoodByeVisible(boolean flag) {
+    private void MakeGoodByeVisible(int flag) {
 
         imgVAttendancePunchIn.setVisibility(View.GONE);
         imgVAttendancePunchOut.setVisibility(View.GONE);
         imgVAttendancePunchComplete
                 .setVisibility(View.VISIBLE);
 
-        if(flag)
+        if(flag==0)
             tvAttendancePunchType.setText("Good Bye Attendance Given By Admin");
+        else if(flag==1)
+            tvAttendancePunchType.setText("Your Punch In Time is Over.");
         else
         tvAttendancePunchType.setText(getResources().getString(
                 R.string.frag_attendance_good_bye));

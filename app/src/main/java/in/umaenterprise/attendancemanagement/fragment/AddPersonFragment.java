@@ -2116,7 +2116,7 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.586644);
                 ll.setLng(88.153602);
-                ll.setRadius(1000);
+                ll.setRadius(600);
                 break;
             case 9:
                 ll.setBranchName("Amta New Branch");
