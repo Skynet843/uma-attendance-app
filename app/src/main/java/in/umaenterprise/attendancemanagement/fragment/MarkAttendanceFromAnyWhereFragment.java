@@ -183,6 +183,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                 .addOnConnectionFailedListener(MarkAttendanceFromAnyWhereFragment.this).build();
     }
 
+    boolean block;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -195,6 +196,7 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             }
         });
         // Building the GoogleApi client
+        block=false;
         buildGoogleApiClient();
         createLocationRequest();
         setToolBar(view);
@@ -495,8 +497,34 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
                                                 isShift2=false;
 
                                             } else if(mPreviousAttendanceModel.getPunchInTimeS2()==null){
-                                                MakePunchInVisible();
 
+                                                if (mTimeSlotArrayList.size() > 0) {
+                                                    /**
+                                                     * Here we convert current date/punch date into day name 'MONDAY','SUNDAY' format
+                                                     */
+                                                    SimpleDateFormat outFormat = new SimpleDateFormat("EEEE", Locale.US);
+                                                    String currentDayName = outFormat.format(new Date()).toUpperCase();
+                                                    /**
+                                                     * Here we EXTRACT time slot model for particular current date/punch date
+                                                     */
+                                                    ShopTimingModel timeModel = null;
+                                                    for (ShopTimingModel model :
+                                                            mTimeSlotArrayList) {
+                                                        assert model != null;
+                                                        if (model.getDay().equalsIgnoreCase(currentDayName)) {
+                                                            timeModel = model;
+                                                            break;
+                                                        }
+                                                    }
+                                                    assert timeModel != null;
+                                                    int totalTime=CommonMethods.calculateTotalHours(timeModel.getFromTimeS2(),tvAttendanceCurrentTime.getText().toString());
+                                                    Log.d(TAG, "onDataChange: "+totalTime+"    "+timeModel.getFromTime()+"   "+tvAttendanceCurrentTime.getText().toString());
+                                                    if(totalTime>10){
+                                                        MakeGoodByeVisible(1);
+                                                    }
+                                                }else {
+                                                    MakePunchInVisible();
+                                                }
                                                 isShift2=true;
                                             }else {
                                                 MakePunchOutVisible();
@@ -885,6 +913,10 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
     }
 
     private void MakePunch(final String strPunchType, final String strPunchTime, LatLong latLong) {
+        if(block){
+            Toast.makeText(getActivity(),"Please Make Sure to Don't take more than 2 min to Give Attendance After Open Mark Attendance Page",Toast.LENGTH_LONG).show();
+            return;
+        }
         // TODO Auto-generated method stub
         if (!isMockLocationEnabled()) {
             Date selectedDate = null;
@@ -1409,9 +1441,15 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             tvAttendanceCurrentTime.setServerDate(time);
             tvAttendanceCurrentTime.setClockTickEventListener(new OnClockTickChangeEvent() {
 
+                int count=0;
                 @Override
                 public void OnTick(long milliSecond) {
-
+                    count++;
+                    if(count>120){
+                        block=true;
+                        MakeGoodByeVisible(2);
+                    }
+                    Log.d("SOUVIK", "OnTick: Go To Hell "+count+"       "+milliSecond);
                 }
             });
 
@@ -1537,6 +1575,8 @@ public class MarkAttendanceFromAnyWhereFragment extends Fragment implements
             tvAttendancePunchType.setText("Good Bye Attendance Given By Admin");
         else if(flag==1)
             tvAttendancePunchType.setText("Your Punch In Time is Over.");
+        else if(flag==2)
+            tvAttendancePunchType.setText("Reopen this Page or Restart App");
         else
         tvAttendancePunchType.setText(getResources().getString(
                 R.string.frag_attendance_good_bye));
