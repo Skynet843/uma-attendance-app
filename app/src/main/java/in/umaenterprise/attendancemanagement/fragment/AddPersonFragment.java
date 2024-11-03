@@ -2067,63 +2067,63 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.667671);
                 ll.setLng(88.130745);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 2:
                 ll.setBranchName("Amta Store");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.579476);
                 ll.setLng(88.005994);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 3:
                 ll.setBranchName("Penro Store");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.656164);
                 ll.setLng(88.016807);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 4:
                 ll.setBranchName("Ranihati Appliance Counter");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.563233);
                 ll.setLng(88.158445);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 5:
                 ll.setBranchName("Ranihati Mobile Counter");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.563693);
                 ll.setLng(88.157532);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 6:
                 ll.setBranchName("Ranihati Uma Motors");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.563911);
                 ll.setLng(88.156268);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 7:
                 ll.setBranchName("Gangadhar Pur Counter");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.593436916667);
                 ll.setLng(88.153512933333);
-                ll.setRadius(150);
+                ll.setRadius(50);
                 break;
             case 8:
                 ll.setBranchName("Warehouse");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.586644);
                 ll.setLng(88.153602);
-                ll.setRadius(1000);
+                ll.setRadius(600);
                 break;
             case 9:
                 ll.setBranchName("Amta New Branch");
                 ll.setBranchCode(String.valueOf(position));
                 ll.setLat(22.579333);
                 ll.setLng(88.004427);
-                ll.setRadius(100);
+                ll.setRadius(50);
                 break;
         }
 
