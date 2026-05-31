@@ -141,6 +141,8 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
     private LatLong ll;
     //Add SOUVIK
     private Spinner area_spinner;
+    private ArrayList<LocationModel> mLocationList;
+    private ValueEventListener locationValueEventListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -236,9 +238,9 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
         mCbNotifyForPunchOut = view.findViewById(R.id.cb_notifiy_for_punch_out);
         // Add SOUVIK
         area_spinner=view.findViewById(R.id.spinner_work_area);
-        ArrayAdapter<CharSequence> areaAdapter=ArrayAdapter.createFromResource(view.getContext(),R.array.area_array, android.R.layout.simple_spinner_item);
-        areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        area_spinner.setAdapter(areaAdapter);
+        
+        mLocationList = new ArrayList<>();
+        fetchLocationsForSpinner();
         area_spinner.setOnItemSelectedListener(this);
 
         RadioGroup mRgWorkTypeSelection = view.findViewById(R.id.rg_work_Type_selection);
@@ -424,10 +426,11 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
             mEtPersonDOB.setText(mPersonModel.getDob());
             mCbNotifyForPunchIn.setChecked(mPersonModel.isNotifyAdminForPunchIn());
             mCbNotifyForPunchOut.setChecked(mPersonModel.isNotifyAdminForPunchOut());
-            if(mPersonModel.getWorkArea()==null){
-                area_spinner.setSelection(0);
-            }else {
-                area_spinner.setSelection(Integer.parseInt(mPersonModel.getWorkArea().getBranchCode()));
+            // Work area selection is deferred to fetchLocationsForSpinner()
+            // which matches by branch code string after the location list loads.
+            // Also attempt immediate selection if locations are already loaded.
+            if (mPersonModel.getWorkArea() != null && !mLocationList.isEmpty()) {
+                selectWorkAreaInSpinner(mPersonModel.getWorkArea());
             }
             mEtAmount.setText(String.valueOf(mPersonModel.getAmount()));
             if (mPersonModel.getWorkType().equalsIgnoreCase(ConstantData.WORK_TYPE_DAY_WISE)) {
@@ -2029,17 +2032,21 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
                 ContextCompat.getDrawable(Objects.requireNonNull(getActivity()),R.drawable.baseline_account_circle_black));
     }
 
-    private int getIndex(Spinner spinner, String branchCode) {
-        int index = 0;
-        int size = spinner.getCount();
-        for (int i = 0; i < size; i++) {
-            LocationModel relationModel = (LocationModel) spinner.getItemAtPosition(i);
-            if (relationModel.getCode().equalsIgnoreCase(branchCode)) {
-                index = i;
-                break;
+    /**
+     * Selects the spinner position matching the employee's saved work area.
+     * Falls back to Any Area (index 0) if no match is found or workArea is null.
+     */
+    private void selectWorkAreaInSpinner(LatLong workArea) {
+        if (workArea != null && workArea.getBranchCode() != null) {
+            for (int i = 0; i < mLocationList.size(); i++) {
+                if (workArea.getBranchCode().equals(mLocationList.get(i).getCode())) {
+                    area_spinner.setSelection(i);
+                    return;
+                }
             }
         }
-        return index;
+        // Default to Any Area (index 0)
+        area_spinner.setSelection(0);
     }
 
 
@@ -2047,86 +2054,73 @@ public class AddPersonFragment extends Fragment implements RadioGroup.OnCheckedC
     public void onDestroyView() {
         super.onDestroyView();
         ImagePickerActivity.clearCache(Objects.requireNonNull(getActivity()));
+        if (locationValueEventListener != null) {
+            AttendanceApplication.refCompanyLocations.removeEventListener(locationValueEventListener);
+        }
+    }
+    
+    private void fetchLocationsForSpinner() {
+        locationValueEventListener = AttendanceApplication.refCompanyLocations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mLocationList.clear();
+                
+                // Add default "Any Area"
+                LocationModel anyArea = new LocationModel();
+                anyArea.setName("Any Area");
+                anyArea.setCode("0");
+                anyArea.setLatitude(0);
+                anyArea.setLongitude(0);
+                anyArea.setRadius(0);
+                mLocationList.add(anyArea);
+                
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        LocationModel model = snapshot.getValue(LocationModel.class);
+                        if (model != null) {
+                            model.setFirebaseKey(snapshot.getKey());
+                            mLocationList.add(model);
+                        }
+                    }
+                }
+                
+                ArrayList<String> locationNames = new ArrayList<>();
+                for (LocationModel location : mLocationList) {
+                    locationNames.add(location.getName());
+                }
+                
+                if (getActivity() != null) {
+                    ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, locationNames);
+                    areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    area_spinner.setAdapter(areaAdapter);
+                    
+                    // If we're updating a person, re-select their location
+                    if (mPersonModel != null && mPersonModel.getWorkArea() != null) {
+                        selectWorkAreaInSpinner(mPersonModel.getWorkArea());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // handle error
+            }
+        });
     }
 
 // Add SOUVIK
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        ll=new LatLong();
-        switch (position){
-            case 0:
-                ll.setBranchName("Any Branch");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(0);
-                ll.setLng(0);
-                ll.setRadius(0);
-                break;
-            case 1:
-                ll.setBranchName("Bargachia Counter");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.667671);
-                ll.setLng(88.130745);
-                ll.setRadius(50);
-                break;
-            case 2:
-                ll.setBranchName("Amta Store");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.579476);
-                ll.setLng(88.005994);
-                ll.setRadius(50);
-                break;
-            case 3:
-                ll.setBranchName("Penro Store");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.656164);
-                ll.setLng(88.016807);
-                ll.setRadius(50);
-                break;
-            case 4:
-                ll.setBranchName("Ranihati Appliance Counter");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.563233);
-                ll.setLng(88.158445);
-                ll.setRadius(50);
-                break;
-            case 5:
-                ll.setBranchName("Ranihati Mobile Counter");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.563693);
-                ll.setLng(88.157532);
-                ll.setRadius(50);
-                break;
-            case 6:
-                ll.setBranchName("Ranihati Uma Motors");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.563911);
-                ll.setLng(88.156268);
-                ll.setRadius(50);
-                break;
-            case 7:
-                ll.setBranchName("Gangadhar Pur Counter");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.593436916667);
-                ll.setLng(88.153512933333);
-                ll.setRadius(50);
-                break;
-            case 8:
-                ll.setBranchName("Warehouse");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.586644);
-                ll.setLng(88.153602);
-                ll.setRadius(600);
-                break;
-            case 9:
-                ll.setBranchName("Amta New Branch");
-                ll.setBranchCode(String.valueOf(position));
-                ll.setLat(22.579333);
-                ll.setLng(88.004427);
-                ll.setRadius(50);
-                break;
+        ll = new LatLong();
+        if (mLocationList != null && position >= 0 && position < mLocationList.size()) {
+            LocationModel selectedLocation = mLocationList.get(position);
+            ll.setBranchName(selectedLocation.getName());
+            ll.setBranchCode(selectedLocation.getCode() != null && !selectedLocation.getCode().isEmpty() ? selectedLocation.getCode() : String.valueOf(position));
+            ll.setLat(selectedLocation.getLatitude());
+            ll.setLng(selectedLocation.getLongitude());
+            ll.setRadius(selectedLocation.getRadius());
         }
-
     }
 
     @Override

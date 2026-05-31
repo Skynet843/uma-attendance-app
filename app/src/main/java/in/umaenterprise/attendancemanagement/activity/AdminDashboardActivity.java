@@ -78,6 +78,7 @@ import in.umaenterprise.attendancemanagement.fragment.AddPersonFragment;
 import in.umaenterprise.attendancemanagement.fragment.BranchWiseHolidayListFragment;
 import in.umaenterprise.attendancemanagement.fragment.EmployeePerformanceFragment;
 import in.umaenterprise.attendancemanagement.fragment.FindCompanyBranchOnMapFragment;
+import in.umaenterprise.attendancemanagement.fragment.ManageLocationsFragment;
 import in.umaenterprise.attendancemanagement.fragment.NotesFragment;
 import in.umaenterprise.attendancemanagement.fragment.PresentEmployeesFragment;
 import in.umaenterprise.attendancemanagement.fragment.SettingsFragment;
@@ -112,6 +113,8 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
 
         FirebaseMessaging.getInstance().subscribeToTopic("Users");
         FirebaseMessaging.getInstance().subscribeToTopic(ConstantData.SUBSCRIBE_ALL_COMPANY_USERS);
+        
+        checkAndMigrateLocations();
     }
 
 
@@ -134,7 +137,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
 
     private void init() {
 
-        String strModuleResult = "[{'ModuleName':'Add Holidays','ModuleDesc':'Add public holidays only','ModuleColor':'#2EA752','ModuleId':2,'VersionCode':13},{'ModuleName':'Add Employee','ModuleDesc':'Add Employee for whose wants to mark attendance','ModuleColor':'#E00166','ModuleId':3,'VersionCode':13},{'ModuleName':'View Employees','ModuleDesc':'List of registered employees','ModuleColor':'#5788A6','ModuleId':4,'VersionCode':0},{'ModuleName':'Today Present Employees','ModuleDesc':'Check date wise all registered employees presence or punch in/out','ModuleColor':'#5788A6','ModuleId':5,'VersionCode':0},{'ModuleName':'Calculate Salary','ModuleDesc':'Check month wise attendance & calculate salary for particular employee','ModuleColor':'#298ACB','ModuleId':6,'VersionCode':0},{'ModuleName':'View Attendance Report','ModuleDesc':'Check months wise employees attendance reports in Chart format','ModuleColor':'#298ACB','ModuleId':7,'VersionCode':12},{'ModuleName':'Live Tracking','ModuleDesc':'Track only current location of employee','ModuleColor':'#F4AA11','ModuleId':8,'VersionCode':0},{'ModuleName':'Change Password','ModuleDesc':'Allow to change your password','ModuleColor':'#F4AA11','ModuleId':9,'VersionCode':0},{'ModuleName':'Generate Employee Details','ModuleDesc':'This Generate All Employee Details At Once','ModuleColor':'#F4AA11','ModuleId':10,'VersionCode':0}]";
+        String strModuleResult = "[{'ModuleName':'Manage Locations','ModuleDesc':'Add and manage company branch locations','ModuleColor':'#2EA752','ModuleId':11,'VersionCode':13},{'ModuleName':'Add Holidays','ModuleDesc':'Add public holidays only','ModuleColor':'#2EA752','ModuleId':2,'VersionCode':13},{'ModuleName':'Add Employee','ModuleDesc':'Add Employee for whose wants to mark attendance','ModuleColor':'#E00166','ModuleId':3,'VersionCode':13},{'ModuleName':'View Employees','ModuleDesc':'List of registered employees','ModuleColor':'#5788A6','ModuleId':4,'VersionCode':0},{'ModuleName':'Today Present Employees','ModuleDesc':'Check date wise all registered employees presence or punch in/out','ModuleColor':'#5788A6','ModuleId':5,'VersionCode':0},{'ModuleName':'Calculate Salary','ModuleDesc':'Check month wise attendance & calculate salary for particular employee','ModuleColor':'#298ACB','ModuleId':6,'VersionCode':0},{'ModuleName':'View Attendance Report','ModuleDesc':'Check months wise employees attendance reports in Chart format','ModuleColor':'#298ACB','ModuleId':7,'VersionCode':12},{'ModuleName':'Live Tracking','ModuleDesc':'Track only current location of employee','ModuleColor':'#F4AA11','ModuleId':8,'VersionCode':0},{'ModuleName':'Change Password','ModuleDesc':'Allow to change your password','ModuleColor':'#F4AA11','ModuleId':9,'VersionCode':0},{'ModuleName':'Generate Employee Details','ModuleDesc':'This Generate All Employee Details At Once','ModuleColor':'#F4AA11','ModuleId':10,'VersionCode':0}]";
         ArrayList<AppModuleModel> modulesList = new ArrayList<>();
         try {
             Type listType = new TypeToken<List<AppModuleModel>>() {
@@ -217,6 +220,10 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
                         break;
                     case 10:
                         showEmployeeDetailsGenerator();
+                        break;
+                    case 11://Manage Locations
+                        loadFragment(new ManageLocationsFragment(), null);
+                        break;
                     default:
                         break;
 
@@ -777,6 +784,32 @@ public class AdminDashboardActivity extends AppCompatActivity implements FindCom
                                 CommonMethods.cancelProgressDialog();
                             }
                         });
+    }
+
+    private void checkAndMigrateLocations() {
+        AttendanceApplication.refCompanyLocations.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    String[] names = {"Bargachia Counter", "Amta Store", "Penro Store", "Ranihati Appliance Counter", "Ranihati Mobile Counter", "Ranihati Uma Motors", "Gangadhar Pur Counter", "Warehouse", "Amta New Branch"};
+                    double[] lats = {22.667671, 22.579476, 22.656164, 22.563233, 22.563693, 22.563911, 22.593436916667, 22.586644, 22.579333};
+                    double[] lngs = {88.130745, 88.005994, 88.016807, 88.158445, 88.157532, 88.156268, 88.153512933333, 88.153602, 88.004427};
+                    int[] radiuses = {50, 50, 50, 50, 50, 50, 50, 600, 50};
+                    for (int i = 0; i < names.length; i++) {
+                        in.umaenterprise.attendancemanagement.model.LocationModel model = new in.umaenterprise.attendancemanagement.model.LocationModel();
+                        model.setName(names[i]);
+                        model.setAddress(names[i]);
+                        model.setCode(String.valueOf(i + 1));
+                        model.setLatitude(lats[i]);
+                        model.setLongitude(lngs[i]);
+                        model.setRadius(radiuses[i]);
+                        AttendanceApplication.refCompanyLocations.push().setValue(model);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
 }

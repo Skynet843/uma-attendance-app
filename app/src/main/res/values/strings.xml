@@ -1,4 +1,6 @@
 <resources>
+    <string name="toolbar_title_manage_locations">Manage Locations</string>
+    <string name="msg_no_locations_yet">No locations added yet.</string>
     //Add SOUVIK
     <string-array name="area_array">
         <item>Any Area</item>
@@ -51,7 +53,7 @@
     <string name="title_alert">Alert</string>
     <string name="msg_enter_company_code">Enter Company Code</string>
     <string name="alert_title_delete_location">Delete</string>
-    <string name="alert_message_delete_location">Please make sure there is no any employee mapped with this branch.Otherwise application start misbehaving. \n\nAre you sure to delete this Branch?</string>
+    <string name="alert_message_delete_location">Employees mapped to this branch will be moved to \'Any Area\'. \n\nAre you sure to delete this Branch?</string>
     <string name="alert_title_delete_person">Delete</string>
     <string name="alert_message_delete_person">Once you delete this employee,all his/her attendance details getting erased.\n\nAre you sure to delete this employee?</string>
     <string name="action_no">NO</string>

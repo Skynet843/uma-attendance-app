@@ -32,6 +32,7 @@ public class AttendanceApplication extends MultiDexApplication {
     public static DatabaseReference refPhoneMappingRequest;
     public static DatabaseReference refLocationTracking;
     public static DatabaseReference refNotes;
+    public static DatabaseReference refCompanyLocations;
     public static StorageReference storageReference;
     public static StorageReference storageReferenceAttendanceImage;
 
@@ -61,6 +62,8 @@ public class AttendanceApplication extends MultiDexApplication {
                 .child(ConstantData.FIREBASE_NODE_LOCATION_TRACKING);
         refNotes = referenceNode
                 .child(ConstantData.FIREBASE_NODE_NOTES);
+        refCompanyLocations = referenceNode
+                .child(ConstantData.FIREBASE_NODE_COMPANY_LOCATIONS);
         storageReference = FirebaseStorage.getInstance().getReference(ConstantData.FIREBASE_STORAGE_NODE_EMPLOYEE_PROFILE_IMAGE);
         storageReferenceAttendanceImage = FirebaseStorage.getInstance().getReference(ConstantData.FIREBASE_STORAGE_NODE_ATTENDANCE_IMAGE);
 
